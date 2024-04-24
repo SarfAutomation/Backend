@@ -15,16 +15,16 @@ port = os.getenv("PORT")
 
 async def main():
     async with async_playwright() as p:
-        # # Initialize the parser
-        # parser = argparse.ArgumentParser()
+        # Initialize the parser
+        parser = argparse.ArgumentParser()
 
-        # # Add parameters
-        # parser.add_argument("-l", type=str)
+        # Add parameters
+        parser.add_argument("-l", type=str)
 
-        # # Parse the arguments
-        # linkedinUrl = parser.parse_args().l
+        # Parse the arguments
+        linkedinUrl = parser.parse_args().l
 
-        linkedinUrl = "https://www.linkedin.com/in/kelly-aguilar-b0a229240/"
+        # linkedinUrl = "https://www.linkedin.com/in/kelly-aguilar-b0a229240/"
         key = "AQEDAR5mR60C386-AAABjs-h9BAAAAGO8654EFYAnlJkWITqvqUD3WfQNNBMZRzOQLGwMBt7s6N5va13mQ71C2WEWkghD2IdYSy1WHG3OOkC5SIPscZcn9icKjGHyT0uPw-twG031xOKucazzmOpce6G"
 
         browser = await p.chromium.launch(headless=False)
