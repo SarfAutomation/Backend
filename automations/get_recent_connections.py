@@ -78,7 +78,7 @@ async def main():
                 number = int(matches.group(1))
                 unit = matches.group(2)
 
-                if time_to_value[unit] * number <= time_offset:
+                if time_to_value[unit] * number < time_offset:
                     link_element = await card.query_selector(
                         "a.mn-connection-card__link"
                     )
