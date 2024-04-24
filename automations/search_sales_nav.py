@@ -61,7 +61,7 @@ async def main():
         # search_url = parser.parse_args().s
 
         search_url = "https://www.linkedin.com/sales/search/people?recentSearchId=3638734740&sessionId=8nfRO4D1Q9C5yn5bwKzSLw%3D%3D&viewAllFilters=true"
-        amount = 10
+        amount = 20
 
         key = "AQEDAR5mR60C386-AAABjs-h9BAAAAGO8654EFYAnlJkWITqvqUD3WfQNNBMZRzOQLGwMBt7s6N5va13mQ71C2WEWkghD2IdYSy1WHG3OOkC5SIPscZcn9icKjGHyT0uPw-twG031xOKucazzmOpce6G"
 
@@ -82,8 +82,9 @@ async def main():
         await page.reload()
         page_count = 1
         result = []
-        is_open_count = 0
-        while is_open_count < amount:
+        open_count = 0
+        close_count = 0
+        while open_count < amount:
             await page.goto(
                 f"{search_url}&page={page_count}",
                 wait_until="domcontentloaded",
@@ -94,11 +95,13 @@ async def main():
             await scroll_within_element_and_check(page, scrollable_element_selector)
             list_items = await page.query_selector_all(selector)
             for item in list_items:
-                if is_open_count >= amount:
+                if open_count >= amount:
                     break
                 premium_icon = await item.query_selector(
                     'li-icon[type="linkedin-premium-gold-icon"]'
                 )
+                if not premium_icon and close_count > amount:
+                    continue
                 name_element = await item.query_selector(
                     'span[data-anonymize="person-name"]'
                 )
@@ -127,9 +130,10 @@ async def main():
                     }
                 )
                 if premium_icon:
-                    is_open_count += 1
+                    open_count += 1
             page_count += 1
         print(json.dumps(result))
         await browser.close()
+
 
 asyncio.run(main())
