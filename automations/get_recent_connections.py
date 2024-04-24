@@ -29,8 +29,6 @@ async def main():
         # content = parser.parse_args().c
         # key = parser.parse_args().k
 
-        name = "Dyllan Liu"
-        content = "I am defintely cooking"
         key = "AQEDAR5mR60C386-AAABjs-h9BAAAAGO8654EFYAnlJkWITqvqUD3WfQNNBMZRzOQLGwMBt7s6N5va13mQ71C2WEWkghD2IdYSy1WHG3OOkC5SIPscZcn9icKjGHyT0uPw-twG031xOKucazzmOpce6G"
 
         browser = await p.chromium.launch(headless=False)
@@ -56,8 +54,6 @@ async def main():
         # Select all elements with the time information and their respective details container
         connection_cards = await page.query_selector_all(selector)
 
-        time_offset = 60 * 60 * 24
-
         time_to_value = {
             "minute": 60,
             "hour": 60 * 60,
@@ -66,6 +62,8 @@ async def main():
             "month": 60 * 60 * 24 * 30,
             "year": 60 * 60 * 24 * 365,
         }
+
+        time_offset = time_to_value["day"]
 
         result = []
 

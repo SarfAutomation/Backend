@@ -114,7 +114,7 @@ router.post("/check-connection", async (req, res) => {
         "./automations/get_recent_connections.py",
       ]);
       const salesNavUrls = [];
-      for (const linkedinUrl of data.slice(0, 2)) {
+      for (const linkedinUrl of data) {
         const salesNavUrl = await scheduleJob([
           "-u",
           "./automations/get_sales_nav_url.py",
