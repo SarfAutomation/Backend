@@ -51,9 +51,7 @@ async def main():
         }
         page = await context.new_page()
         agent = WebAgent(page)
-        await page.goto("https://www.linkedin.com/")
         await context.add_cookies([li_at])
-        await page.reload()
         await page.goto(
             profile_link,
             wait_until="domcontentloaded",
@@ -83,5 +81,6 @@ async def main():
         print(json.dumps("Done"))
         await page.wait_for_timeout(1500)
         await browser.close()
+
 
 asyncio.run(main())

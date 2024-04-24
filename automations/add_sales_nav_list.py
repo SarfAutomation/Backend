@@ -51,9 +51,7 @@ async def main():
         }
         page = await context.new_page()
         agent = WebAgent(page)
-        await page.goto("https://www.linkedin.com/")
         await context.add_cookies([li_at])
-        await page.reload()
         await page.goto(
             profile_link,
             wait_until="domcontentloaded",
@@ -61,10 +59,11 @@ async def main():
         await page.wait_for_timeout(random.randint(1000, 3000))
         await page.click('button[aria-label*="Save to list"]')
         await page.wait_for_timeout(random.randint(1000, 3000))
-        await page.wait_for_selector(f'text={list}', state='visible')
-        await page.click(f'text={list}')
+        await page.wait_for_selector(f"text={list}", state="visible")
+        await page.click(f"text={list}")
         print(json.dumps("Done"))
         await page.wait_for_timeout(1500)
         await browser.close()
+
 
 asyncio.run(main())

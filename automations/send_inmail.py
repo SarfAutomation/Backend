@@ -53,9 +53,7 @@ async def main():
         }
         page = await context.new_page()
         agent = WebAgent(page)
-        await page.goto("https://www.linkedin.com/")
         await context.add_cookies([li_at])
-        await page.reload()
         result = []
         await page.goto(
             profile_link,

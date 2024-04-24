@@ -44,10 +44,7 @@ async def main():
             "secure": True,
         }
         agent = WebAgent(page)
-        await page.goto("https://www.linkedin.com/")
         await context.add_cookies([li_at])
-        await page.reload()
-
         await page.goto(
             f"https://www.linkedin.com/messaging/thread/new/",
             wait_until="domcontentloaded",

@@ -40,9 +40,7 @@ async def main():
         }
         page = await context.new_page()
         agent = WebAgent(page)
-        await page.goto("https://www.linkedin.com/")
         await context.add_cookies([li_at])
-        await page.reload()
         await page.goto(f"https://www.linkedin.com/in/{account}/")
         await page.wait_for_timeout(random.randint(1000, 3000))
         await agent.chat(
