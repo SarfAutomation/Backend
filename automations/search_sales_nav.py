@@ -51,17 +51,17 @@ async def scroll_within_element_and_check(page, selector):
 
 async def main():
     async with async_playwright() as p:
-        # # Initialize the parser
-        # parser = argparse.ArgumentParser()
+        # Initialize the parser
+        parser = argparse.ArgumentParser()
 
-        # # Add parameters
-        # parser.add_argument("-s", type=str)
+        # Add parameters
+        parser.add_argument("-s", type=str)
 
-        # # Parse the arguments
-        # search_url = parser.parse_args().s
+        # Parse the arguments
+        search_url = parser.parse_args().s
 
-        search_url = "https://www.linkedin.com/sales/search/people?recentSearchId=3638734740&sessionId=8nfRO4D1Q9C5yn5bwKzSLw%3D%3D&viewAllFilters=true"
-        amount = 20
+        # search_url = "https://www.linkedin.com/sales/search/people?recentSearchId=3638734740&sessionId=8nfRO4D1Q9C5yn5bwKzSLw%3D%3D&viewAllFilters=true"
+        amount = 15
 
         key = "AQEDAR5mR60C386-AAABjs-h9BAAAAGO8654EFYAnlJkWITqvqUD3WfQNNBMZRzOQLGwMBt7s6N5va13mQ71C2WEWkghD2IdYSy1WHG3OOkC5SIPscZcn9icKjGHyT0uPw-twG031xOKucazzmOpce6G"
 

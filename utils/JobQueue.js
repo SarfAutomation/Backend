@@ -35,10 +35,11 @@ const runPythonFile = async (params) => {
   return new Promise((resolve, reject) => {
     const pythonProcess = spawn("python3.11", params);
 
-    let dataList = [];
+    let result = "";
 
     pythonProcess.stdout.on("data", (data) => {
-      dataList.push(data.toString());
+      console.log(data.toString());
+      result += data.toString();
     });
 
     pythonProcess.stderr.on("data", (data) => {
@@ -48,7 +49,7 @@ const runPythonFile = async (params) => {
     pythonProcess.on("close", async (code) => {
       if (code === 0) {
         try {
-          resolve(JSON.parse(dataList));
+          resolve(JSON.parse(result));
         } catch {
           resolve();
         }
