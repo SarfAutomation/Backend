@@ -50,6 +50,7 @@ async def main():
         link_selector = 'a:has-text("Message in Sales Navigator")'
         try:
             href = await page.get_attribute(link_selector, "href", timeout=5000)
+            href = href.split("?msgType=inmail")[0]
             await page.goto(href)
             await page.wait_for_timeout(random.randint(1000, 3000))
             selector = f'button:has(span:has-text("Close conversation with {name}"))'
