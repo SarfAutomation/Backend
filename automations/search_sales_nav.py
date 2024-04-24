@@ -134,6 +134,8 @@ async def main():
                 )
                 if premium_icon:
                     open_count += 1
+                else:
+                    close_count += 1
             page_count += 1
         print(json.dumps(result))
         await browser.close()
