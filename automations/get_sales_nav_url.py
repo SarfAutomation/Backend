@@ -24,7 +24,7 @@ async def main():
         # Parse the arguments
         linkedinUrl = parser.parse_args().l
 
-        # linkedinUrl = "https://www.linkedin.com/in/kelly-aguilar-b0a229240/"
+        # linkedinUrl = "https://www.linkedin.com/in/%F0%9F%87%AE%F0%9F%87%B3-vikas-singh-08627326/"
         key = "AQEDAR5mR60C386-AAABjs-h9BAAAAGO8654EFYAnlJkWITqvqUD3WfQNNBMZRzOQLGwMBt7s6N5va13mQ71C2WEWkghD2IdYSy1WHG3OOkC5SIPscZcn9icKjGHyT0uPw-twG031xOKucazzmOpce6G"
 
         browser = await p.chromium.launch(headless=False)
@@ -50,12 +50,8 @@ async def main():
         link_selector = 'a:has-text("Message in Sales Navigator")'
         try:
             href = await page.get_attribute(link_selector, "href", timeout=5000)
-            href = href.split("?msgType=inmail")[0]
+            href = href.split("&")[0]
             await page.goto(href)
-            await page.wait_for_timeout(random.randint(1000, 3000))
-            selector = f'button:has(span:has-text("Close conversation with {name}"))'
-            await page.wait_for_selector(selector)
-            await page.click(selector)
         except:
             await page.goto(
                 f"https://www.linkedin.com/sales/search/people?query=(recentSearchParam%3A(doLogHistory%3Atrue)%2CspellCorrectionEnabled%3Atrue%2Ckeywords%3A{name})"
@@ -89,6 +85,7 @@ async def main():
                 await browser.close()
                 return
             await page.click(profile_link_selector)
+        await page.wait_for_timeout(random.randint(1000, 3000))
         button_selector = 'button[aria-label="Add note"]'
         await page.wait_for_selector(button_selector)
         await page.click(button_selector)
