@@ -41,56 +41,40 @@ async def main():
         agent = WebAgent(page)
         await context.add_cookies([li_at])
         await page.goto(linkedinUrl)
-        await page.wait_for_timeout(random.randint(1000, 3000))
         await page.wait_for_selector(
             "h1.text-heading-xlarge.inline.t-24.v-align-middle.break-words"
         )
         name = await page.text_content(
             "h1.text-heading-xlarge.inline.t-24.v-align-middle.break-words"
         )
-        more_actions_buttons = await page.query_selector_all(
-            f'[aria-label="More actions"]'
-        )
-        for more_action_button in more_actions_buttons:
-            try:
-                await more_action_button.click(timeout=5000)
-            except Exception as e:
-                pass
-        view_sales_nav_buttons = await page.query_selector_all(
-            f"""[aria-label="View {html.escape(name)}’s profile in Sales Navigator"]"""
-        )
+        link_selector = 'a:has-text("Message in Sales Navigator")'
+        href = await page.get_attribute(link_selector, 'href')
+        await page.goto(href)
         await page.wait_for_timeout(random.randint(1000, 3000))
-        button_clicked = False
-        for view_sales_nav_button in view_sales_nav_buttons:
-            try:
-                await view_sales_nav_button.click(timeout=5000)
-                button_clicked = True
-            except Exception as e:
-                pass
-
-        if button_clicked:
-            new_page = await context.wait_for_event("page")
-            button_selector = 'button[aria-label="Add note"]'
-            await new_page.wait_for_selector(button_selector)
-            await new_page.click(button_selector)
-            await page.wait_for_timeout(random.randint(1000, 3000))
-            try:
-                note_selector = (
-                    ".sharing-entity-notes-vertical-list-widget-card .p2.break-words"
-                )
-                await new_page.wait_for_selector(note_selector)
-                contains_new_connection = await new_page.evaluate(
-                    """() => {
-                    const elements = document.querySelectorAll('.sharing-entity-notes-vertical-list-widget-card .p2.break-words');
-                    return Array.from(elements).some(el => el.textContent.includes("New Connection"));
-                }"""
-                )
-                if contains_new_connection:
-                    print(json.dumps({"name": name, "url": new_page.url}))
-                    return
-            except:
-                pass
-            print(json.dumps({"name": "", "url": ""}))
+        selector = f'button:has(span:has-text("Close conversation with {name}"))'
+        await page.wait_for_selector(selector)
+        await page.click(selector)
+        button_selector = 'button[aria-label="Add note"]'
+        await page.wait_for_selector(button_selector)
+        await page.click(button_selector)
+        await page.wait_for_timeout(random.randint(1000, 3000))
+        try:
+            note_selector = (
+                ".sharing-entity-notes-vertical-list-widget-card .p2.break-words"
+            )
+            await page.wait_for_selector(note_selector, 5000)
+            contains_new_connection = await page.evaluate(
+                """() => {
+                const elements = document.querySelectorAll('.sharing-entity-notes-vertical-list-widget-card .p2.break-words');
+                return Array.from(elements).some(el => el.textContent.includes("New Connection"));
+            }"""
+            )
+            if contains_new_connection:
+                print(json.dumps({"name": name, "url": page.url}))
+                return
+        except:
+            pass
+        print(json.dumps({"name": "", "url": ""}))
         await browser.close()
 
 
