@@ -113,7 +113,6 @@ router.post("/check-connection", async (req, res) => {
         "-u",
         "./automations/get_recent_connections.py",
       ]);
-      const salesNavUrls = [];
       for (const linkedinUrl of data) {
         const salesNavUrl = await scheduleJob([
           "-u",
@@ -121,15 +120,13 @@ router.post("/check-connection", async (req, res) => {
           "-l",
           linkedinUrl,
         ]);
-        salesNavUrls.push(salesNavUrl);
+        await axios.post(
+          "https://hooks.zapier.com/hooks/catch/18369368/3nvym70/",
+          {
+            salesNavUrls: [salesNavUrl],
+          }
+        );
       }
-      await axios.post(
-        "https://hooks.zapier.com/hooks/catch/18369368/3nvym70/",
-        {
-          salesNavUrls,
-        }
-      );
-      console.log(salesNavUrls);
     };
     job();
     return res.status(200).send("Started");
