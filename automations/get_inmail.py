@@ -91,7 +91,7 @@ async def main():
         print(
             json.dumps(
                 {
-                    "url": "https://www.linkedin.com/sales/inbox/" + href,
+                    "url": "https://www.linkedin.com/" + href,
                     "messages": result,
                 }
             )

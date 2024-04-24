@@ -24,22 +24,24 @@ def extract_user_id_from_linkedin_url(url):
 
 async def main():
     async with async_playwright() as p:
-        # Initialize the parser
-        parser = argparse.ArgumentParser()
+        # # Initialize the parser
+        # parser = argparse.ArgumentParser()
 
-        # Add parameters
-        parser.add_argument("-p", type=str)
-        parser.add_argument("-m", type=str)
-        parser.add_argument("-s", type=str)
+        # # Add parameters
+        # parser.add_argument("-p", type=str)
+        # parser.add_argument("-m", type=str)
+        # parser.add_argument("-s", type=str)
 
-        # Parse the arguments
-        profile_link = parser.parse_args().p
-        message = parser.parse_args().m
-        subject = parser.parse_args().s
+        # # Parse the arguments
+        # profile_link = parser.parse_args().p
+        # message = parser.parse_args().m
+        # subject = parser.parse_args().s
 
-        # profile_link = "https://www.linkedin.com/sales/lead/ACwAAC8j2XgB9klQz4mACtczFI4opqIqQM4o1fg,NAME_SEARCH,nQAI"
+        profile_link = "https://www.linkedin.com/sales/lead/ACwAAC8j2XgB9klQz4mACtczFI4opqIqQM4o1fg,NAME_SEARCH,nQAI"
 
         key = "AQEDAR5mR60C386-AAABjs-h9BAAAAGO8654EFYAnlJkWITqvqUD3WfQNNBMZRzOQLGwMBt7s6N5va13mQ71C2WEWkghD2IdYSy1WHG3OOkC5SIPscZcn9icKjGHyT0uPw-twG031xOKucazzmOpce6G"
+        message = "Hello"
+        subject = "Hello"
 
         browser = await p.chromium.launch(headless=False)
 
@@ -64,7 +66,8 @@ async def main():
         name_element = await page.query_selector(selector)
         name = await name_element.text_content()
         name = name.strip()
-        button_selector = 'button:has-text("Message")'
+        button_selector = '[data-anchor-send-inmail]'
+        await page.wait_for_selector(button_selector, state='visible')
         await page.click(button_selector)
         subject_selector = "input.compose-form__subject-field"
         message_selector = "textarea.compose-form__message-field"
