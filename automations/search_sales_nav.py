@@ -108,7 +108,6 @@ async def main():
                 profile_link_selector = 'a.inverse-link-on-a-light-background-without-visited-and-hover:has-text("View profile")'
                 dropdown_hidden = True
                 while dropdown_hidden:
-                    print("wtf")
                     try:
                         selector = f'button[aria-label="See more actions for {name}"]'
                         await page.wait_for_selector(selector)
@@ -119,8 +118,6 @@ async def main():
                         )
                         dropdown_hidden = False
                     except Exception as e:
-                        print(e)
-                        print(name)
                         pass
                 href = await page.get_attribute(profile_link_selector, "href")
                 result.append(
