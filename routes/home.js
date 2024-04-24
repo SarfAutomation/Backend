@@ -121,14 +121,14 @@ router.post("/check-connection", async (req, res) => {
           "-l",
           linkedinUrl,
         ]);
-        await axios.post(
-          "https://hooks.zapier.com/hooks/catch/18369368/3nvym70/",
-          {
-            salesNavUrls,
-          }
-        );
         salesNavUrls.push(salesNavUrl);
       }
+      await axios.post(
+        "https://hooks.zapier.com/hooks/catch/18369368/3nvym70/",
+        {
+          salesNavUrls,
+        }
+      );
       console.log(salesNavUrls);
     };
     job();
