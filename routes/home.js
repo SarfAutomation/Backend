@@ -10,9 +10,13 @@ const router = express.Router();
 
 router.post("/check-sales-nav-reply", async (req, res) => {
   try {
-    const { profile, name } = req.body;
+    const { profile, name, type } = req.body;
     const job = async () => {
       try {
+        const callbackUrl =
+          type == "LPA"
+            ? "https://hooks.zapier.com/hooks/catch/18369368/3nvau6i/"
+            : "https://hooks.zapier.com/hooks/catch/18369368/37u8r8a/";
         const data = await scheduleJob([
           "-u",
           "./automations/get_inmail.py",
@@ -32,14 +36,11 @@ router.post("/check-sales-nav-reply", async (req, res) => {
             "REPLIED",
           ]);
         }
-        await axios.post(
-          "https://hooks.zapier.com/hooks/catch/18369368/3nvau6i/",
-          {
-            hasReplied: replies.length > 0,
-            replies,
-            url: data.url,
-          }
-        );
+        await axios.post(callbackUrl, {
+          hasReplied: replies.length > 0,
+          replies,
+          url: data.url,
+        });
       } catch (error) {
         console.log("check-sales-nav-reply ERROR:", error);
       }

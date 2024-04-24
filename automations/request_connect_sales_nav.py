@@ -59,7 +59,7 @@ async def main():
             await page.wait_for_selector(
                 ".button-primary-medium.connect-cta-form__send", state="visible"
             )
-            # await page.click(".button-primary-medium.connect-cta-form__send")
+            await page.click(".button-primary-medium.connect-cta-form__send")
             await page.wait_for_timeout(random.randint(1000, 3000))
             print(json.dumps({"crSent": True}))
         except:
