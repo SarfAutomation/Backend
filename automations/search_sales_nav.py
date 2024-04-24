@@ -128,7 +128,7 @@ async def main():
                 result.append(
                     {
                         "name": name,
-                        "url": "https://www.linkedin.com/" + href,
+                        "url": "https://www.linkedin.com" + href,
                         "isOpen": premium_icon is not None,
                     }
                 )
