@@ -45,20 +45,10 @@ async def main():
         await context.add_cookies([li_at])
         await page.goto(profileUrl)
         await page.wait_for_timeout(random.randint(1000, 3000))
-        selector = 'h1[data-anonymize="person-name"]'
-        await page.wait_for_selector(
-            selector,
-            timeout=5000,
-        )
-        name = await page.text_content(
-            selector,
-            timeout=5000,
-        )
-        name = name.strip()
         await page.click('button[aria-label="Open actions overflow menu"]')
         await page.wait_for_timeout(random.randint(1000, 3000))
         try:
-            await page.wait_for_selector("text=Connect", state="visible", timeout=5000)
+            await page.wait_for_selector("text=Connect", state="visible")
             await page.click("text=Connect")
             await page.wait_for_timeout(random.randint(1000, 3000))
             await page.type(
@@ -71,9 +61,9 @@ async def main():
             )
             # await page.click(".button-primary-medium.connect-cta-form__send")
             await page.wait_for_timeout(random.randint(1000, 3000))
-            print(json.dumps({"name": name, "crSent": True}))
+            print(json.dumps({"crSent": True}))
         except:
-            print(json.dumps({"name": name, "crSent": False}))
+            print(json.dumps({"crSent": False}))
             pass
         await browser.close()
 

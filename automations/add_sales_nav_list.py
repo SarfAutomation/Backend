@@ -61,7 +61,6 @@ async def main():
         await page.wait_for_timeout(random.randint(1000, 3000))
         await page.wait_for_selector(f"text={list}", state="visible")
         await page.click(f"text={list}")
-        print(json.dumps("Done"))
         await page.wait_for_timeout(1500)
         await browser.close()
 

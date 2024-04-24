@@ -108,7 +108,8 @@ async def main():
                 await page.wait_for_timeout(random.randint(1000, 3000))
                 profile_link_selector = 'a.inverse-link-on-a-light-background-without-visited-and-hover:has-text("View profile")'
                 dropdown_hidden = True
-                while dropdown_hidden:
+                tries = 0
+                while dropdown_hidden and tries < 10:
                     try:
                         selector = f'button[aria-label="See more actions for {name}"]'
                         await page.wait_for_selector(selector)
@@ -120,9 +121,11 @@ async def main():
                         dropdown_hidden = False
                     except Exception as e:
                         pass
+                    tries += 1
                 href = await page.get_attribute(profile_link_selector, "href")
                 result.append(
                     {
+                        "name": name,
                         "url": "https://www.linkedin.com/" + href,
                         "isOpen": premium_icon is not None,
                     }

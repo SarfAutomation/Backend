@@ -78,7 +78,6 @@ async def main():
         )
         await page.wait_for_selector(f"{button_selector}:not([disabled])")
         await page.click(button_selector)
-        print(json.dumps("Done"))
         await page.wait_for_timeout(1500)
         await browser.close()
 

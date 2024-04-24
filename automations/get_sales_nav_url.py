@@ -43,12 +43,10 @@ async def main():
         await page.goto(linkedinUrl)
         await page.wait_for_timeout(random.randint(1000, 3000))
         await page.wait_for_selector(
-            "h1.text-heading-xlarge.inline.t-24.v-align-middle.break-words",
-            timeout=5000,
+            "h1.text-heading-xlarge.inline.t-24.v-align-middle.break-words"
         )
         name = await page.text_content(
-            "h1.text-heading-xlarge.inline.t-24.v-align-middle.break-words",
-            timeout=5000,
+            "h1.text-heading-xlarge.inline.t-24.v-align-middle.break-words"
         )
         more_actions_buttons = await page.query_selector_all(
             f'[aria-label="More actions"]'
@@ -80,7 +78,7 @@ async def main():
                 note_selector = (
                     ".sharing-entity-notes-vertical-list-widget-card .p2.break-words"
                 )
-                await new_page.wait_for_selector(note_selector, timeout=5000)
+                await new_page.wait_for_selector(note_selector)
                 contains_new_connection = await new_page.evaluate(
                     """() => {
                     const elements = document.querySelectorAll('.sharing-entity-notes-vertical-list-widget-card .p2.break-words');

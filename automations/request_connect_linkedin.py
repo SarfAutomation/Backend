@@ -48,11 +48,9 @@ async def main():
         await page.wait_for_timeout(random.randint(1000, 3000))
         await page.wait_for_selector(
             "h1.text-heading-xlarge.inline.t-24.v-align-middle.break-words",
-            timeout=5000,
         )
         name = await page.text_content(
             "h1.text-heading-xlarge.inline.t-24.v-align-middle.break-words",
-            timeout=5000,
         )
         more_actions_buttons = await page.query_selector_all(
             f'[aria-label="More actions"]'
@@ -75,8 +73,8 @@ async def main():
                 print(e)
         if connect_button_clicked:
             await page.wait_for_timeout(random.randint(1000, 3000))
-            await page.wait_for_selector('[aria-label="Add a note"]', timeout=5000)
-            await page.click('[aria-label="Add a note"]', timeout=5000)
+            await page.wait_for_selector('[aria-label="Add a note"]')
+            await page.click('[aria-label="Add a note"]')
             await page.wait_for_timeout(random.randint(1000, 3000))
             await page.type(
                 'textarea[name="message"]',
@@ -84,10 +82,9 @@ async def main():
             )
             await page.wait_for_timeout(random.randint(1000, 3000))
             await page.click(
-                ".artdeco-button.artdeco-button--2.artdeco-button--primary.ember-view.ml1",
-                timeout=5000,
+                ".artdeco-button.artdeco-button--2.artdeco-button--primary.ember-view.ml1"
             )
-        
+
         await browser.close()
 
 
