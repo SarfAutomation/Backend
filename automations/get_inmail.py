@@ -54,6 +54,7 @@ async def main():
             await page.wait_for_selector(link_selector, timeout=5000)
         except:
             print(json.dumps({"url": "", "messages": []}))
+            await browser.close()
             return
         link_element = await page.query_selector(link_selector)
         href = await link_element.get_attribute("href")

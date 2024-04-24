@@ -15,16 +15,16 @@ port = os.getenv("PORT")
 
 async def main():
     async with async_playwright() as p:
-        # Initialize the parser
-        parser = argparse.ArgumentParser()
+        # # Initialize the parser
+        # parser = argparse.ArgumentParser()
 
-        # Add parameters
-        parser.add_argument("-l", type=str)
+        # # Add parameters
+        # parser.add_argument("-l", type=str)
 
-        # Parse the arguments
-        linkedinUrl = parser.parse_args().l
+        # # Parse the arguments
+        # linkedinUrl = parser.parse_args().l
 
-        # linkedinUrl = "https://www.linkedin.com/in/kelly-aguilar-b0a229240/"
+        linkedinUrl = "https://www.linkedin.com/in/kelly-aguilar-b0a229240/"
         key = "AQEDAR5mR60C386-AAABjs-h9BAAAAGO8654EFYAnlJkWITqvqUD3WfQNNBMZRzOQLGwMBt7s6N5va13mQ71C2WEWkghD2IdYSy1WHG3OOkC5SIPscZcn9icKjGHyT0uPw-twG031xOKucazzmOpce6G"
 
         browser = await p.chromium.launch(headless=False)
@@ -96,7 +96,7 @@ async def main():
             note_selector = (
                 ".sharing-entity-notes-vertical-list-widget-card .p2.break-words"
             )
-            await page.wait_for_selector(note_selector, 5000)
+            await page.wait_for_selector(note_selector, timeout=5000)
             contains_new_connection = await page.evaluate(
                 """() => {
                 const elements = document.querySelectorAll('.sharing-entity-notes-vertical-list-widget-card .p2.break-words');
@@ -104,7 +104,8 @@ async def main():
             }"""
             )
             if contains_new_connection:
-                print(json.dumps({"name": name, "url": page.url}))
+                print(json.dumps({"name": name, "url": page.url}))        
+                await browser.close()
                 return
         except:
             pass
