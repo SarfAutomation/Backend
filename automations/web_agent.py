@@ -59,12 +59,6 @@ class WebAgent:
             {"navigation": "forward"}
             {"navigation": "reload"}
 
-            You can record the reachout by answering with the following JSON format:
-            {"record reachout": {"email": "Email", "keyword": "Keyword", "question": "Question", "name": "Name of the reachout"}}
-
-            You can record the response by answering with the following JSON format:
-            {"record response": {"account": "Account", "email": "Email", "keyword": "Keyword", "question": "Question", "name": "Name of the reachout", "response": "Response"}}
-
             Once you are on a URL and you have found the answer to the user's question, you can answer with a regular message.
 
             Use google search by set a sub-page like 'https://google.com/search?q=search

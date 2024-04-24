@@ -8,17 +8,9 @@ const ProxySchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  account: {
+  key: {
     type: String,
     required: true,
-  },
-  password: {
-    type: String,
-    required: true,
-  },
-  isInUse: {
-    type: Boolean,
-    default: false,
   },
 });
 

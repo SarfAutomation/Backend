@@ -4,14 +4,22 @@ from playwright.async_api import Playwright, async_playwright, expect
 async def main() -> None:
     async with async_playwright() as playwright:
         browser = await playwright.chromium.launch(headless=False)
-
-        context = await browser.new_context()
-        page = await context.new_page()
-        winodw_id = int(run_command('xdotool search --onlyvisible --name "Chromium"'))
-        print(f'x11vnc -id {winodw_id} -rfbport 5902 -viewonly')
         
-        process = run_command_async(f'x11vnc -id {winodw_id} -rfbport 5902 -viewonly -forever')
-        print(process.pid)
+        context = await browser.new_context(proxy={"server": "http://192.168.86.31:3128"})
+        page = await context.new_page()
+
+        await page.goto(
+                "http://whatismyipaddress.com/"
+            )
+        await page.screenshot(path="screenshot.jpg")
+        # await page.goto("https://www.linkedin.com/")
+        await page.wait_for_timeout(999999999)
+
+        # winodw_id = int(run_command('xdotool search --onlyvisible --name "Chromium"'))
+        # print(f'x11vnc -id {winodw_id} -rfbport 5902 -viewonly')
+        
+        # process = run_command_async(f'x11vnc -id {winodw_id} -rfbport 5902 -viewonly -forever')
+        # print(process.pid)
 
         await page.wait_for_timeout(99999999)
 

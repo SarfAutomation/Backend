@@ -1,7 +1,6 @@
 import Bull from "bull";
 import dotenv from "dotenv";
 import { spawn } from "child_process";
-import { Flow } from "../models/Flow.js";
 import { Proxy } from "../models/Proxy.js";
 
 dotenv.config();
@@ -11,13 +10,13 @@ const jobQueues = {};
 const setup = async () => {
   const proxies = [
     {
-      account:
-        "AQEDAR5mR60C386-AAABjs-h9BAAAAGO8654EFYAnlJkWITqvqUD3WfQNNBMZRzOQLGwMBt7s6N5va13mQ71C2WEWkghD2IdYSy1WHG3OOkC5SIPscZcn9icKjGHyT0uPw-twG031xOKucazzmOpce6G",
+      key: "AQEDAR5mR60C386-AAABjs-h9BAAAAGO8654EFYAnlJkWITqvqUD3WfQNNBMZRzOQLGwMBt7s6N5va13mQ71C2WEWkghD2IdYSy1WHG3OOkC5SIPscZcn9icKjGHyT0uPw-twG031xOKucazzmOpce6G",
     },
   ];
+  // const proxies = await Proxy.find({});
   proxies.forEach(
     (proxy) =>
-      (jobQueues[proxy.account] = new Bull(`${proxy.account}-jobQueue`, {
+      (jobQueues[proxy.key] = new Bull(`${proxy.key}-jobQueue`, {
         redis: {
           host: process.env.REDIS_HOST, // e.g., '127.0.0.1'
           port: process.env.REDIS_PORT, // e.g., 6379
@@ -26,10 +25,10 @@ const setup = async () => {
   );
 
   await Promise.all(
-    proxies.map(async (proxy) => await jobQueues[proxy.account].empty())
+    proxies.map(async (proxy) => await jobQueues[proxy.key].empty())
   );
 
-  proxies.forEach((proxy) => jobQueues[proxy.account].process(processJob));
+  proxies.forEach((proxy) => jobQueues[proxy.key].process(processJob));
 };
 
 const runPythonFile = async (params) => {
@@ -61,11 +60,12 @@ const processJob = async (job) => {
   return await runPythonFile(params);
 };
 
-async function scheduleJob(params) {
+async function scheduleJob(params, key) {
   return new Promise((resolve, reject) => {
     jobQueues[
       "AQEDAR5mR60C386-AAABjs-h9BAAAAGO8654EFYAnlJkWITqvqUD3WfQNNBMZRzOQLGwMBt7s6N5va13mQ71C2WEWkghD2IdYSy1WHG3OOkC5SIPscZcn9icKjGHyT0uPw-twG031xOKucazzmOpce6G"
     ]
+    // jobQueues[key]
       .add({
         params,
       })

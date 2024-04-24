@@ -193,15 +193,4 @@ router.post("/connect-from-search", async (req, res) => {
   }
 });
 
-router.get("/get-proxy/:account", async (req, res) => {
-  try {
-    const { account } = req.params;
-    const proxy = await Proxy.findOne({ account });
-    return res.status(200).send({ proxy });
-  } catch (error) {
-    console.log(error);
-    return res.status(400).send("Something went wrong");
-  }
-});
-
 export default router;
