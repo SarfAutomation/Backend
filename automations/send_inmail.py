@@ -61,6 +61,7 @@ async def main():
             profile_link,
             wait_until="domcontentloaded",
         )
+        await page.wait_for_timeout(random.randint(1000, 3000))
         selector = 'span[data-anonymize="person-name"]'
         await page.wait_for_selector(selector)
         name_element = await page.query_selector(selector)
