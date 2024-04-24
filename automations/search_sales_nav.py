@@ -122,6 +122,8 @@ async def main():
                     except Exception as e:
                         pass
                     tries += 1
+                if dropdown_hidden:
+                    continue
                 href = await page.get_attribute(profile_link_selector, "href")
                 result.append(
                     {

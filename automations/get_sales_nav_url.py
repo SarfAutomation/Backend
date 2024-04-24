@@ -15,16 +15,16 @@ port = os.getenv("PORT")
 
 async def main():
     async with async_playwright() as p:
-        # Initialize the parser
-        parser = argparse.ArgumentParser()
+        # # Initialize the parser
+        # parser = argparse.ArgumentParser()
 
-        # Add parameters
-        parser.add_argument("-l", type=str)
+        # # Add parameters
+        # parser.add_argument("-l", type=str)
 
-        # Parse the arguments
-        linkedinUrl = parser.parse_args().l
+        # # Parse the arguments
+        # linkedinUrl = parser.parse_args().l
 
-        # linkedinUrl = "https://www.linkedin.com/in/adriennekfong"
+        linkedinUrl = "https://www.linkedin.com/in/kelly-aguilar-b0a229240/"
         key = "AQEDAR5mR60C386-AAABjs-h9BAAAAGO8654EFYAnlJkWITqvqUD3WfQNNBMZRzOQLGwMBt7s6N5va13mQ71C2WEWkghD2IdYSy1WHG3OOkC5SIPscZcn9icKjGHyT0uPw-twG031xOKucazzmOpce6G"
 
         browser = await p.chromium.launch(headless=False)
@@ -48,12 +48,46 @@ async def main():
             "h1.text-heading-xlarge.inline.t-24.v-align-middle.break-words"
         )
         link_selector = 'a:has-text("Message in Sales Navigator")'
-        href = await page.get_attribute(link_selector, 'href')
-        await page.goto(href)
-        await page.wait_for_timeout(random.randint(1000, 3000))
-        selector = f'button:has(span:has-text("Close conversation with {name}"))'
-        await page.wait_for_selector(selector)
-        await page.click(selector)
+        try:
+            href = await page.get_attribute(link_selector, "href", timeout=5000)
+            await page.goto(href)
+            await page.wait_for_timeout(random.randint(1000, 3000))
+            selector = f'button:has(span:has-text("Close conversation with {name}"))'
+            await page.wait_for_selector(selector)
+            await page.click(selector)
+        except:
+            await page.goto(
+                f"https://www.linkedin.com/sales/search/people?query=(recentSearchParam%3A(doLogHistory%3Atrue)%2CspellCorrectionEnabled%3Atrue%2Ckeywords%3A{name})"
+            )
+            selector = "div.artdeco-entity-lockup__content"
+            await page.wait_for_selector(selector)
+            list_items = await page.query_selector_all(selector)
+            item = list_items[0]
+            name_element = await item.query_selector(
+                'span[data-anonymize="person-name"]'
+            )
+            name = await name_element.text_content()
+            name = name.strip()
+            await page.wait_for_timeout(random.randint(1000, 3000))
+            profile_link_selector = 'a.inverse-link-on-a-light-background-without-visited-and-hover:has-text("View profile")'
+            dropdown_hidden = True
+            tries = 0
+            while dropdown_hidden and tries < 10:
+                try:
+                    selector = f'button[aria-label="See more actions for {name}"]'
+                    await page.wait_for_selector(selector)
+                    button = await page.query_selector(selector)
+                    await button.click(timeout=1000)
+                    await page.wait_for_selector(profile_link_selector, timeout=1000)
+                    dropdown_hidden = False
+                except Exception as e:
+                    pass
+                tries += 1
+            if dropdown_hidden:
+                print(json.dumps({"name": "", "url": ""}))
+                await browser.close()
+                return
+            await page.click(profile_link_selector)
         button_selector = 'button[aria-label="Add note"]'
         await page.wait_for_selector(button_selector)
         await page.click(button_selector)
