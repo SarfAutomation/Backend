@@ -123,7 +123,7 @@ router.post("/check-connection", async (req, res) => {
         await axios.post(
           "https://hooks.zapier.com/hooks/catch/18369368/3nvym70/",
           {
-            salesNavUrls: [salesNavUrl],
+            salesNavUrl,
           }
         );
       }
