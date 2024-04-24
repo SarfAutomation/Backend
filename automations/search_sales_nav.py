@@ -51,17 +51,17 @@ async def scroll_within_element_and_check(page, selector):
 
 async def main():
     async with async_playwright() as p:
-        # Initialize the parser
-        parser = argparse.ArgumentParser()
+        # # Initialize the parser
+        # parser = argparse.ArgumentParser()
 
-        # Add parameters
-        parser.add_argument("-s", type=str)
+        # # Add parameters
+        # parser.add_argument("-s", type=str)
 
-        # Parse the arguments
-        search_url = parser.parse_args().s
+        # # Parse the arguments
+        # search_url = parser.parse_args().s
 
-        # search_url = "https://www.linkedin.com/sales/search/people?recentSearchId=3638734740&sessionId=8nfRO4D1Q9C5yn5bwKzSLw%3D%3D&viewAllFilters=true"
-        amount = 1
+        search_url = "https://www.linkedin.com/sales/search/people?recentSearchId=3638734740&sessionId=8nfRO4D1Q9C5yn5bwKzSLw%3D%3D&viewAllFilters=true"
+        amount = 10
 
         key = "AQEDAR5mR60C386-AAABjs-h9BAAAAGO8654EFYAnlJkWITqvqUD3WfQNNBMZRzOQLGwMBt7s6N5va13mQ71C2WEWkghD2IdYSy1WHG3OOkC5SIPscZcn9icKjGHyT0uPw-twG031xOKucazzmOpce6G"
 
@@ -104,21 +104,23 @@ async def main():
                 )
                 name = await name_element.text_content()
                 name = name.strip()
-                selector = f'button[aria-label="See more actions for {name}"]'
-                await page.wait_for_selector(selector)
-                button = await page.query_selector(selector)
-                await button.click()
                 await page.wait_for_timeout(random.randint(1000, 3000))
                 profile_link_selector = 'a.inverse-link-on-a-light-background-without-visited-and-hover:has-text("View profile")'
                 dropdown_hidden = True
                 while dropdown_hidden:
+                    print("wtf")
                     try:
+                        selector = f'button[aria-label="See more actions for {name}"]'
+                        await page.wait_for_selector(selector)
+                        button = await page.query_selector(selector)
+                        await button.click(timeout=1000)
                         await page.wait_for_selector(
                             profile_link_selector, timeout=1000
                         )
                         dropdown_hidden = False
-                    except:
-                        await button.click()
+                    except Exception as e:
+                        print(e)
+                        print(name)
                         pass
                 href = await page.get_attribute(profile_link_selector, "href")
                 result.append(
@@ -132,7 +134,5 @@ async def main():
             page_count += 1
         print(json.dumps(result))
         await browser.close()
-        return result
-
 
 asyncio.run(main())
