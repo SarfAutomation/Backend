@@ -169,42 +169,46 @@ router.post("/connect-from-search", async (req, res) => {
           searchUrl,
         ]);
         for (const profile of profiles) {
-          const { name, url, isOpen } = profile;
-          const finalMessage = message.replace("NAME", name.split(" ")[0]);
-          const { crSent } = await scheduleJob([
-            "-u",
-            "./automations/request_connect_sales_nav.py",
-            "-p",
-            url,
-            "-m",
-            finalMessage,
-          ]);
-          if (crSent) {
-            await scheduleJob([
+          try {
+            const { name, url, isOpen } = profile;
+            const finalMessage = message.replace("NAME", name.split(" ")[0]);
+            const { crSent } = await scheduleJob([
               "-u",
-              "./automations/add_sales_nav_note.py",
+              "./automations/request_connect_sales_nav.py",
               "-p",
               url,
-              "-n",
-              "New Connection",
+              "-m",
+              finalMessage,
             ]);
-            await scheduleJob([
-              "-u",
-              "./automations/add_sales_nav_list.py",
-              "-p",
-              url,
-              "-l",
-              "CR Sent",
-            ]);
-            if (isOpen) {
+            if (crSent) {
+              await scheduleJob([
+                "-u",
+                "./automations/add_sales_nav_note.py",
+                "-p",
+                url,
+                "-n",
+                "New Connection",
+              ]);
+              await scheduleJob([
+                "-u",
+                "./automations/add_sales_nav_list.py",
+                "-p",
+                url,
+                "-l",
+                "CR Sent",
+              ]);
+              if (isOpen) {
+                await axios.post(
+                  "https://hooks.zapier.com/hooks/catch/18369368/373nvju/",
+                  { name, url }
+                );
+              }
               await axios.post(
-                "https://hooks.zapier.com/hooks/catch/18369368/373nvju/",
-                { name, url }
+                "https://hooks.zapier.com/hooks/catch/18369368/372rzbo/"
               );
             }
-            await axios.post(
-              "https://hooks.zapier.com/hooks/catch/18369368/372rzbo/"
-            );
+          } catch (error) {
+            console.log(error);
           }
         }
       } catch (error) {
