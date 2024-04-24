@@ -182,6 +182,9 @@ router.post("/connect-from-search", async (req, res) => {
               { name, url }
             );
           }
+          await axios.post(
+            "https://hooks.zapier.com/hooks/catch/18369368/372rzbo/"
+          );
         }
       }
     };
