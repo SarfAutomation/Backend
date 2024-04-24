@@ -47,7 +47,11 @@ const runPythonFile = async (params) => {
 
     pythonProcess.on("close", async (code) => {
       if (code === 0) {
-        resolve(JSON.parse(dataList));
+        try {
+          resolve(JSON.parse(dataList));
+        } catch {
+          resolve();
+        }
       } else {
         reject(`Process failed with code ${code}`);
       }
@@ -65,7 +69,7 @@ async function scheduleJob(params, key) {
     jobQueues[
       "AQEDAR5mR60C386-AAABjs-h9BAAAAGO8654EFYAnlJkWITqvqUD3WfQNNBMZRzOQLGwMBt7s6N5va13mQ71C2WEWkghD2IdYSy1WHG3OOkC5SIPscZcn9icKjGHyT0uPw-twG031xOKucazzmOpce6G"
     ]
-    // jobQueues[key]
+      // jobQueues[key]
       .add({
         params,
       })
