@@ -170,7 +170,7 @@ router.post("/connect-from-search", async (req, res) => {
         ]);
         for (const profile of profiles) {
           const { name, url, isOpen } = profile;
-          const finalMessage = message.replace("NAME", name);
+          const finalMessage = message.replace("NAME", name.split(" ")[0]);
           const { crSent } = await scheduleJob([
             "-u",
             "./automations/request_connect_sales_nav.py",
