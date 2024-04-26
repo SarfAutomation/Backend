@@ -44,7 +44,7 @@ async def main():
 
         input_selector = "#left-rail-inbox-search"
 
-        await page.type(input_selector, name)
+        await page.fill(input_selector, name)
         await page.keyboard.press("Enter")
         await page.wait_for_timeout(random.randint(1000, 3000))
         link_selector = (
