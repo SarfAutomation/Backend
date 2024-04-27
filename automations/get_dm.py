@@ -6,6 +6,7 @@ import requests
 import os
 from dotenv import load_dotenv
 import random
+import json
 
 load_dotenv()
 
@@ -14,21 +15,16 @@ port = os.getenv("PORT")
 
 async def main():
     async with async_playwright() as p:
-        # # Initialize the parser
-        # parser = argparse.ArgumentParser()
+        # Initialize the parser
+        parser = argparse.ArgumentParser()
 
-        # # Add parameters
-        # parser.add_argument("-n", type=str)
-        # parser.add_argument("-c", type=str)
-        # parser.add_argument("-k", type=str)
+        # Add parameters
+        parser.add_argument("-n", type=str)
 
-        # # Parse the arguments
-        # name = parser.parse_args().n
-        # content = parser.parse_args().c
-        # key = parser.parse_args().k
+        # Parse the arguments
+        name = parser.parse_args().n
 
-        name = "Dyllan Liu"
-        content = "I am defintely cooking"
+        # name = "Dyllan Liu"
         key = "AQEDAR5mR60C386-AAABjs-h9BAAAAGO8654EFYAnlJkWITqvqUD3WfQNNBMZRzOQLGwMBt7s6N5va13mQ71C2WEWkghD2IdYSy1WHG3OOkC5SIPscZcn9icKjGHyT0uPw-twG031xOKucazzmOpce6G"
 
         browser = await p.chromium.launch(headless=False)
@@ -46,17 +42,28 @@ async def main():
         agent = WebAgent(page)
         await context.add_cookies([li_at])
         await page.goto(
-            f"https://www.linkedin.com/messaging/thread/new/",
+            f"https://www.linkedin.com/messaging/",
             wait_until="domcontentloaded",
         )
-        await page.type("input.msg-connections-typeahead__search-field", name)
-        await page.wait_for_timeout(1000)
-        buttons = await page.query_selector_all(
-            f'button.msg-connections-typeahead__search-result:has-text("{name}")'
-        )
-        if buttons:
-            await buttons[0].click()
-        await page.wait_for_timeout(1000)
+        input_selector = "#search-conversations"
+        await page.wait_for_selector(input_selector, state="visible")
+        await page.type(input_selector, name)
+        await page.keyboard.press("Enter")
+        await page.wait_for_timeout(random.randint(1000, 3000))
+        selector = '//a[contains(@id, "ember") and contains(@class, "ember-view msg-conversation-listitem__link msg-conversations-container__convo-item-link pl3")]'
+        try:
+            await page.wait_for_selector(
+                selector,
+                timeout=5000,
+            )
+        except:
+            print(json.dumps({"url": "", "messages": []}))
+            await browser.close()
+            return
+        elements = await page.query_selector_all(selector)
+        if elements:
+            await elements[0].click()
+        await page.wait_for_timeout(random.randint(1000, 3000))
         message_items = await page.query_selector_all(".msg-s-message-list__event")
 
         result = []
@@ -79,7 +86,14 @@ async def main():
             result.append(
                 {"name": sender_name, "time": message_time, "content": message_content}
             )
-        print( result)
+        print(
+            json.dumps(
+                {
+                    "url": page.url,
+                    "messages": result,
+                }
+            )
+        )
         await browser.close()
         return result
 

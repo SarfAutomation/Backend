@@ -85,7 +85,7 @@ async def main():
         button_enabled = await page.is_enabled(send_button_selector)
         if button_enabled:
             print(json.dumps("Button is enabled; can click."))
-            # await page.click(send_button_selector)
+            await page.click(send_button_selector)
         else:
             print(json.dumps("Button is disabled; cannot click."))
         await page.wait_for_timeout(random.randint(1000, 3000))

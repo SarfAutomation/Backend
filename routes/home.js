@@ -8,15 +8,13 @@ import axios from "axios";
 dotenv.config();
 const router = express.Router();
 
-router.post("/check-sales-nav-reply", async (req, res) => {
+router.post("/check-IC-reply", async (req, res) => {
   try {
-    const { profile, name, type } = req.body;
+    const { profile, name } = req.body;
     const job = async () => {
       try {
         const callbackUrl =
-          type == "LPA"
-            ? "https://hooks.zapier.com/hooks/catch/18369368/3nvau6i/"
-            : "https://hooks.zapier.com/hooks/catch/18369368/37u8r8a/";
+          "https://hooks.zapier.com/hooks/catch/18369368/37u8r8a/";
         const data = await scheduleJob([
           "-u",
           "./automations/get_inmail.py",
@@ -26,6 +24,54 @@ router.post("/check-sales-nav-reply", async (req, res) => {
         const replies = data.messages.filter(
           (message) => message.name != "You"
         );
+        if (replies.length) {
+          await scheduleJob([
+            "-u",
+            "./automations/add_sales_nav_note.py",
+            "-p",
+            profile,
+            "-n",
+            "REPLIED",
+          ]);
+        }
+        await axios.post(callbackUrl, {
+          hasReplied: replies.length > 0,
+          replies,
+          url: data.url,
+        });
+      } catch (error) {
+        console.log("check-sales-nav-reply ERROR:", error);
+      }
+    };
+    job();
+    return res.status(200).send("Started");
+  } catch (error) {
+    console.log(error);
+    return res.status(400).send("Something went wrong");
+  }
+});
+
+router.post("/check-LPA-reply", async (req, res) => {
+  try {
+    const { profile, name } = req.body;
+    const job = async () => {
+      try {
+        const callbackUrl =
+          "https://hooks.zapier.com/hooks/catch/18369368/3nvau6i/";
+        let data = await scheduleJob([
+          "-u",
+          "./automations/get_inmail.py",
+          "-n",
+          name,
+        ]);
+        const inmailReplies = data.messages.filter(
+          (message) => message.name != "You"
+        );
+        data = await scheduleJob(["-u", "./automations/get_dm.py", "-n", name]);
+        const dmReplies = data.messages.filter(
+          (message) => message.name != "You"
+        );
+        const replies = [...inmailReplies, ...dmReplies];
         if (replies.length) {
           await scheduleJob([
             "-u",
