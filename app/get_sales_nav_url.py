@@ -15,7 +15,7 @@ async def get_sales_nav_url(params, headless=True):
             raise Exception("Missing params")
 
         # linkedin_url = "https://www.linkedin.com/in/%F0%9F%87%AE%F0%9F%87%B3-vikas-singh-08627326/"
-        key = "AQEDAR5mR60C386-AAABjs-h9BAAAAGO8654EFYAnlJkWITqvqUD3WfQNNBMZRzOQLGwMBt7s6N5va13mQ71C2WEWkghD2IdYSy1WHG3OOkC5SIPscZcn9icKjGHyT0uPw-twG031xOKucazzmOpce6G"
+        # key = "AQEDAR5mR60C386-AAABjs-h9BAAAAGO8654EFYAnlJkWITqvqUD3WfQNNBMZRzOQLGwMBt7s6N5va13mQ71C2WEWkghD2IdYSy1WHG3OOkC5SIPscZcn9icKjGHyT0uPw-twG031xOKucazzmOpce6G"
 
         args = ["--disable-gpu", "--single-process"] if headless else []
         browser = await p.chromium.launch(args=args, headless=headless)

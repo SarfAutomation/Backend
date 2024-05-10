@@ -48,7 +48,7 @@ async def search_sales_nav(params, headless=True):
 
         # search_url = "https://www.linkedin.com/sales/search/people?recentSearchId=3638734740&sessionId=8nfRO4D1Q9C5yn5bwKzSLw%3D%3D&viewAllFilters=true"
         amount = 15
-        key = "AQEDAR5mR60C386-AAABjs-h9BAAAAGO8654EFYAnlJkWITqvqUD3WfQNNBMZRzOQLGwMBt7s6N5va13mQ71C2WEWkghD2IdYSy1WHG3OOkC5SIPscZcn9icKjGHyT0uPw-twG031xOKucazzmOpce6G"
+        # key = "AQEDAR5mR60C386-AAABjs-h9BAAAAGO8654EFYAnlJkWITqvqUD3WfQNNBMZRzOQLGwMBt7s6N5va13mQ71C2WEWkghD2IdYSy1WHG3OOkC5SIPscZcn9icKjGHyT0uPw-twG031xOKucazzmOpce6G"
 
         args = ["--disable-gpu", "--single-process"] if headless else []
         browser = await p.chromium.launch(args=args, headless=headless)
