@@ -2,18 +2,19 @@ import Bull from "bull";
 import dotenv from "dotenv";
 import { spawn } from "child_process";
 import { Proxy } from "../models/Proxy.js";
+import axios from "axios";
 
 dotenv.config();
 
 const jobQueues = {};
 
 const setup = async () => {
-  const proxies = [
-    {
-      key: "AQEDAR5mR60C386-AAABjs-h9BAAAAGO8654EFYAnlJkWITqvqUD3WfQNNBMZRzOQLGwMBt7s6N5va13mQ71C2WEWkghD2IdYSy1WHG3OOkC5SIPscZcn9icKjGHyT0uPw-twG031xOKucazzmOpce6G",
-    },
-  ];
-  // const proxies = await Proxy.find({});
+  // const proxies = [
+  //   {
+  //     key: "AQEDAR5mR60C386-AAABjs-h9BAAAAGO8654EFYAnlJkWITqvqUD3WfQNNBMZRzOQLGwMBt7s6N5va13mQ71C2WEWkghD2IdYSy1WHG3OOkC5SIPscZcn9icKjGHyT0uPw-twG031xOKucazzmOpce6G",
+  //   },
+  // ];
+  const proxies = await Proxy.find({});
   proxies.forEach(
     (proxy) =>
       (jobQueues[proxy.key] = new Bull(`${proxy.key}-jobQueue`, {
@@ -31,9 +32,19 @@ const setup = async () => {
   proxies.forEach((proxy) => jobQueues[proxy.key].process(processJob));
 };
 
-const runPythonFile = async (params) => {
+const runPythonFile = async (functionName, params) => {
+  const proxy = await Proxy.findOne({ key: params["key"] });
   return new Promise((resolve, reject) => {
-    const pythonProcess = spawn("python3.11", params);
+    const pythonProcess = spawn("python3.11", [
+      "-u",
+      "./app/local_app.py",
+      "-function",
+      functionName,
+      "-params",
+      JSON.stringify(params),
+      "-proxy",
+      JSON.stringify(proxy)
+    ]);
 
     let result = "";
 
@@ -60,18 +71,32 @@ const runPythonFile = async (params) => {
   });
 };
 
-const processJob = async (job) => {
-  const { params } = job.data;
-  return await runPythonFile(params);
+const runLambda = async (functionName, params) => {
+  const proxy = await Proxy.findOne({ key: params["key"] });
+  const result = await axios.post(
+    "http://localhost:8080/2015-03-31/functions/function/invocations",
+    {
+      body: {
+        function_name: functionName,
+        params: params,
+        proxy: proxy,
+      },
+    }
+  );
+  return result.data;
 };
 
-async function scheduleJob(params, key) {
+const processJob = async (job) => {
+  const { functionName, params } = job.data;
+  // return await runPythonFile(functionName, params);
+  return await runLambda(functionName, params);
+};
+
+async function scheduleJob(functionName, params) {
   return new Promise((resolve, reject) => {
-    jobQueues[
-      "AQEDAR5mR60C386-AAABjs-h9BAAAAGO8654EFYAnlJkWITqvqUD3WfQNNBMZRzOQLGwMBt7s6N5va13mQ71C2WEWkghD2IdYSy1WHG3OOkC5SIPscZcn9icKjGHyT0uPw-twG031xOKucazzmOpce6G"
-    ]
-      // jobQueues[key]
+    jobQueues[params["key"]]
       .add({
+        functionName,
         params,
       })
       .then((job) => {

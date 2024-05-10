@@ -4,7 +4,15 @@ const ProxySchema = new mongoose.Schema({
   /**************************************************************************
    *                           Proxy Information                            *
    **************************************************************************/
-  url: {
+  server: {
+    type: String,
+    required: true,
+  },
+  username: {
+    type: String,
+    required: true,
+  },
+  password: {
     type: String,
     required: true,
   },

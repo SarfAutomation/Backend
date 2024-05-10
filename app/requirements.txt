@@ -1,0 +1,8 @@
+asyncio
+playwright
+openai
+requests
+aiofiles
+tarsier
+awslambdaric
+python-dotenv

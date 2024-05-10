@@ -4,6 +4,7 @@ import { Proxy } from "../models/Proxy.js";
 import { scheduleJob } from "../utils/JobQueue.js";
 import { spawn } from "child_process";
 import axios from "axios";
+import { stringify } from "querystring";
 
 dotenv.config();
 const router = express.Router();
@@ -25,14 +26,11 @@ router.post("/check-IC-reply", async (req, res) => {
           (message) => message.name != "You"
         );
         if (replies.length) {
-          await scheduleJob([
-            "-u",
-            "./automations/add_sales_nav_note.py",
-            "-p",
-            profile,
-            "-n",
-            "REPLIED",
-          ]);
+          await scheduleJob("add_sales_nav_note", {
+            profile_link: profile,
+            note: "REPLIED",
+            key: "AQEDAR5mR60C386-AAABjs-h9BAAAAGO8654EFYAnlJkWITqvqUD3WfQNNBMZRzOQLGwMBt7s6N5va13mQ71C2WEWkghD2IdYSy1WHG3OOkC5SIPscZcn9icKjGHyT0uPw-twG031xOKucazzmOpce6G",
+          });
         }
         await axios.post(callbackUrl, {
           hasReplied: replies.length > 0,
@@ -58,35 +56,33 @@ router.post("/check-LPA-reply", async (req, res) => {
       try {
         const callbackUrl =
           "https://hooks.zapier.com/hooks/catch/18369368/3nvau6i/";
-        let data = await scheduleJob([
-          "-u",
-          "./automations/get_inmail.py",
-          "-n",
-          name,
-        ]);
-        const inmailReplies = data.messages.filter(
+        const inmailData = await scheduleJob("get_inmail", {
+          name: name,
+          key: "AQEDAR5mR60C386-AAABjs-h9BAAAAGO8654EFYAnlJkWITqvqUD3WfQNNBMZRzOQLGwMBt7s6N5va13mQ71C2WEWkghD2IdYSy1WHG3OOkC5SIPscZcn9icKjGHyT0uPw-twG031xOKucazzmOpce6G",
+        });
+        const inmailReplies = inmailData.messages.filter(
           (message) => message.name != "You"
         );
-        data = await scheduleJob(["-u", "./automations/get_dm.py", "-n", name]);
-        const dmReplies = data.messages.filter(
+        const dmData = await scheduleJob("get_dm", {
+          name: name,
+          key: "AQEDAR5mR60C386-AAABjs-h9BAAAAGO8654EFYAnlJkWITqvqUD3WfQNNBMZRzOQLGwMBt7s6N5va13mQ71C2WEWkghD2IdYSy1WHG3OOkC5SIPscZcn9icKjGHyT0uPw-twG031xOKucazzmOpce6G",
+        });
+        const dmReplies = dmData.messages.filter(
           (message) => message.name != "You"
         );
         const replies = [...inmailReplies, ...dmReplies];
         if (replies.length) {
-          await scheduleJob([
-            "-u",
-            "./automations/add_sales_nav_note.py",
-            "-p",
-            profile,
-            "-n",
-            "REPLIED",
-          ]);
+          await scheduleJob("add_sales_nav_note", {
+            profile_link: profile,
+            note: "REPLIED",
+            key: "AQEDAR5mR60C386-AAABjs-h9BAAAAGO8654EFYAnlJkWITqvqUD3WfQNNBMZRzOQLGwMBt7s6N5va13mQ71C2WEWkghD2IdYSy1WHG3OOkC5SIPscZcn9icKjGHyT0uPw-twG031xOKucazzmOpce6G",
+          });
         }
-        await axios.post(callbackUrl, {
-          hasReplied: replies.length > 0,
-          replies,
-          url: data.url,
-        });
+        // await axios.post(callbackUrl, {
+        //   hasReplied: replies.length > 0,
+        //   replies,
+        //   url: dmData.url + "\n" + inmailData.url,
+        // });
       } catch (error) {
         console.log("check-sales-nav-reply ERROR:", error);
       }
@@ -104,16 +100,12 @@ router.post("/send-LPA-inmail", async (req, res) => {
     const { profile, message, index } = req.body;
     const job = async () => {
       try {
-        await scheduleJob([
-          "-u",
-          "./automations/send_inmail.py",
-          "-p",
-          profile,
-          "-m",
-          message,
-          "-s",
-          "",
-        ]);
+        await scheduleJob("send_inmail", {
+          profile_link: profile,
+          message: message,
+          subject: "",
+          key: "AQEDAR5mR60C386-AAABjs-h9BAAAAGO8654EFYAnlJkWITqvqUD3WfQNNBMZRzOQLGwMBt7s6N5va13mQ71C2WEWkghD2IdYSy1WHG3OOkC5SIPscZcn9icKjGHyT0uPw-twG031xOKucazzmOpce6G",
+        });
         await axios.post(
           "https://hooks.zapier.com/hooks/catch/18369368/3nvgssv/",
           {
@@ -138,16 +130,12 @@ router.post("/send-IC-inmail", async (req, res) => {
     const { profile, subject, message, index } = req.body;
     const job = async () => {
       try {
-        await scheduleJob([
-          "-u",
-          "./automations/send_inmail.py",
-          "-p",
-          profile,
-          "-m",
-          message,
-          "-s",
-          subject,
-        ]);
+        await scheduleJob("send_inmail", {
+          profile_link: profile,
+          messaeg: message,
+          subject: subject,
+          key: "AQEDAR5mR60C386-AAABjs-h9BAAAAGO8654EFYAnlJkWITqvqUD3WfQNNBMZRzOQLGwMBt7s6N5va13mQ71C2WEWkghD2IdYSy1WHG3OOkC5SIPscZcn9icKjGHyT0uPw-twG031xOKucazzmOpce6G",
+        });
         await axios.post(
           "https://hooks.zapier.com/hooks/catch/18369368/37y1bdp/",
           {
@@ -171,26 +159,29 @@ router.post("/check-connection", async (req, res) => {
   try {
     const job = async () => {
       try {
-        const data = await scheduleJob([
-          "-u",
-          "./automations/get_recent_connections.py",
-        ]);
-        for (const linkedinUrl of data) {
-          const salesNavUrl = await scheduleJob([
-            "-u",
-            "./automations/get_sales_nav_url.py",
-            "-l",
-            linkedinUrl,
-          ]);
-          if (salesNavUrl.name && salesNavUrl.url) {
-            await axios.post(
-              "https://hooks.zapier.com/hooks/catch/18369368/3nvym70/",
-              {
-                salesNavUrl,
-              }
-            );
-          }
-        }
+        const data = await scheduleJob("get_recent_connections", {
+          key: "AQEDAR5mR60C386-AAABjs-h9BAAAAGO8654EFYAnlJkWITqvqUD3WfQNNBMZRzOQLGwMBt7s6N5va13mQ71C2WEWkghD2IdYSy1WHG3OOkC5SIPscZcn9icKjGHyT0uPw-twG031xOKucazzmOpce6G",
+        });
+        await Promise.all(
+          data.map(async (linkedinUrl) => {
+            let salesNavUrl;
+            try {
+              salesNavUrl = await scheduleJob("get_sales_nav_url", {
+                linkedin_url: linkedinUrl,
+              });
+            } catch (error) {
+              return;
+            }
+            if (salesNavUrl.name && salesNavUrl.url) {
+              await axios.post(
+                "https://hooks.zapier.com/hooks/catch/18369368/3nvym70/",
+                {
+                  salesNavUrl,
+                }
+              );
+            }
+          })
+        );
       } catch (error) {
         console.log("check-connection ERROR:", error);
       }
@@ -208,41 +199,30 @@ router.post("/connect-from-search", async (req, res) => {
     const { searchUrl, message } = req.body;
     const job = async () => {
       try {
-        const profiles = await scheduleJob([
-          "-u",
-          "./automations/search_sales_nav.py",
-          "-s",
-          searchUrl,
-        ]);
+        const profiles = await scheduleJob("search_sales_nav", {
+          search_url: searchUrl,
+          key: "AQEDAR5mR60C386-AAABjs-h9BAAAAGO8654EFYAnlJkWITqvqUD3WfQNNBMZRzOQLGwMBt7s6N5va13mQ71C2WEWkghD2IdYSy1WHG3OOkC5SIPscZcn9icKjGHyT0uPw-twG031xOKucazzmOpce6G",
+        });
         for (const profile of profiles) {
           try {
             const { name, url, isOpen } = profile;
             const finalMessage = message.replace("NAME", name.split(" ")[0]);
-            const { crSent } = await scheduleJob([
-              "-u",
-              "./automations/request_connect_sales_nav.py",
-              "-p",
-              url,
-              "-m",
-              finalMessage,
-            ]);
+            const { crSent } = await scheduleJob("request_connect_sales_nav", {
+              profile_url: url,
+              message: finalMessage,
+              key: "AQEDAR5mR60C386-AAABjs-h9BAAAAGO8654EFYAnlJkWITqvqUD3WfQNNBMZRzOQLGwMBt7s6N5va13mQ71C2WEWkghD2IdYSy1WHG3OOkC5SIPscZcn9icKjGHyT0uPw-twG031xOKucazzmOpce6G",
+            });
             if (crSent) {
-              await scheduleJob([
-                "-u",
-                "./automations/add_sales_nav_note.py",
-                "-p",
-                url,
-                "-n",
-                "New Connection",
-              ]);
-              await scheduleJob([
-                "-u",
-                "./automations/add_sales_nav_list.py",
-                "-p",
-                url,
-                "-l",
-                "CR Sent",
-              ]);
+              await scheduleJob("add_sales_nav_note", {
+                profile_url: url,
+                note: "New Connection",
+                key: "AQEDAR5mR60C386-AAABjs-h9BAAAAGO8654EFYAnlJkWITqvqUD3WfQNNBMZRzOQLGwMBt7s6N5va13mQ71C2WEWkghD2IdYSy1WHG3OOkC5SIPscZcn9icKjGHyT0uPw-twG031xOKucazzmOpce6G",
+              });
+              await scheduleJob("add_sales_nav_list", {
+                profile_url: url,
+                list: "CR Sent",
+                key: "AQEDAR5mR60C386-AAABjs-h9BAAAAGO8654EFYAnlJkWITqvqUD3WfQNNBMZRzOQLGwMBt7s6N5va13mQ71C2WEWkghD2IdYSy1WHG3OOkC5SIPscZcn9icKjGHyT0uPw-twG031xOKucazzmOpce6G",
+              });
               if (isOpen) {
                 await axios.post(
                   "https://hooks.zapier.com/hooks/catch/18369368/373nvju/",
