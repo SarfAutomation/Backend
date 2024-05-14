@@ -125,7 +125,7 @@ async def get_linkedin_profile(params, headless=True):
 
             all_experiences.append(experience)
 
-        await page.wait_for_timeout(10000)
+        await page.wait_for_timeout(3000)
         await browser.close()
        
         return {

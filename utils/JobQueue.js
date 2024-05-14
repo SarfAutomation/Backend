@@ -43,7 +43,7 @@ const runPythonFile = async (functionName, params) => {
       "-params",
       JSON.stringify(params),
       "-proxy",
-      JSON.stringify(proxy)
+      JSON.stringify(proxy),
     ]);
 
     let result = "";
@@ -73,14 +73,22 @@ const runPythonFile = async (functionName, params) => {
 
 const runLambda = async (functionName, params) => {
   const proxy = await Proxy.findOne({ key: params["key"] });
+  // const result = await axios.post(
+  //   "http://localhost:8080/2015-03-31/functions/function/invocations",
+  //   {
+  //     body: {
+  //       function_name: functionName,
+  //       params: params,
+  //       proxy: proxy,
+  //     },
+  //   }
+  // );
   const result = await axios.post(
-    "http://localhost:8080/2015-03-31/functions/function/invocations",
+    "https://uukusuutzb.execute-api.us-west-1.amazonaws.com/default/LambdaPlaywright",
     {
-      body: {
-        function_name: functionName,
-        params: params,
-        proxy: proxy,
-      },
+      function_name: functionName,
+      params: params,
+      proxy: proxy,
     }
   );
   return result.data;

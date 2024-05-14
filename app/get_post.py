@@ -88,7 +88,7 @@ async def get_post(params, headless=True):
 
             comments.append({"name": name, "time": time, "content": content})
         
-        await page.wait_for_timeout(10000)
+        await page.wait_for_timeout(3000)
         await browser.close()
         
         return {
