@@ -284,28 +284,31 @@ router.post("/linkedin-login", async (req, res) => {
   const { email, password, proxyServer, proxyUsername, proxyPassword } =
     req.body;
   try {
-    const { isLoggedIn, cookie, url, savedContext, error } = await scheduleJob("login", {
-      email: email,
-      password: password,
-      proxyServer: proxyServer,
-      proxyUsername: proxyUsername,
-      proxyPassword: proxyPassword,
-    });
+    const { isLoggedIn, cookie, url, savedContext, error } = await scheduleJob(
+      "login",
+      {
+        email: email,
+        password: password,
+        proxyServer: proxyServer,
+        proxyUsername: proxyUsername,
+        proxyPassword: proxyPassword,
+      }
+    );
     if (error) {
       return res.status(400).send(error);
     }
     if (isLoggedIn) {
-      const profile = await scheduleJob("get_own_profile", {
-        key: cookie.value,
-      });
-      const proxy = await Proxy.findOne({ linkedinUrl: profile.url });
+      // const profile = await scheduleJob("get_own_profile", {
+      //   key: cookie.value,
+      // });
+      const proxy = await Proxy.findOne({ key: cookie.value });
       if (!proxy) {
         await Proxy.create({
           server: proxyServer,
           username: proxyUsername,
           password: proxyPassword,
           key: cookie.value,
-          linkedinUrl: profile.url,
+          // linkedinUrl: profile.url,
         });
       } else {
         proxy.key = cookie.value;
@@ -322,7 +325,8 @@ router.post("/linkedin-login", async (req, res) => {
 });
 
 router.post("/linkedin-security-code", async (req, res) => {
-  const { code, url, savedContext, proxyServer, proxyUsername, proxyPassword } = req.body;
+  const { code, url, savedContext, proxyServer, proxyUsername, proxyPassword } =
+    req.body;
   try {
     const { cookie, error } = await scheduleJob("security_code", {
       code: code,
@@ -335,17 +339,17 @@ router.post("/linkedin-security-code", async (req, res) => {
     if (error) {
       return res.status(400).send(error);
     }
-    const profile = await scheduleJob("get_own_profile", {
-      key: cookie.value,
-    });
-    const proxy = await Proxy.findOne({ linkedinUrl: profile.url });
+    // const profile = await scheduleJob("get_own_profile", {
+    //   key: cookie.value,
+    // });
+    const proxy = await Proxy.findOne({ key: cookie.value });
     if (!proxy) {
       await Proxy.create({
         server: proxyServer,
         username: proxyUsername,
         password: proxyPassword,
         key: cookie.value,
-        linkedinUrl: profile.url,
+        // linkedinUrl: profile.url,
       });
     } else {
       proxy.key = cookie.value;

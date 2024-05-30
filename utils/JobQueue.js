@@ -71,7 +71,8 @@ const runPythonFile = async (functionName, params) => {
   });
 };
 
-const runLambda = async (functionName, params) => {
+const runLambda = async (functionName, params, retries = 0) => {
+  const maxBackoff = 32000;
   const proxy = await Proxy.findOne({ key: params["key"] });
   // const result = await axios.post(
   //   "http://localhost:8080/2015-03-31/functions/function/invocations",
@@ -83,14 +84,33 @@ const runLambda = async (functionName, params) => {
   //     },
   //   }
   // );
-  const result = await axios.post(
-    "https://uukusuutzb.execute-api.us-west-1.amazonaws.com/default/LambdaPlaywright",
-    {
-      function_name: functionName,
-      params: params,
-      proxy: proxy,
+  let result;
+  try {
+    result = await axios.post(
+      "https://uukusuutzb.execute-api.us-west-1.amazonaws.com/default/LambdaPlaywright",
+      {
+        function_name: functionName,
+        params: params,
+        proxy: proxy,
+      }
+    );
+  } catch (error) {
+    if (error.response && error.response.status === 503) {
+      await new Promise((resolve) =>
+        setTimeout(
+          resolve,
+          Math.min(
+            Math.pow(2, retries) * 1000 + Math.random() * 1000,
+            maxBackoff
+          )
+        )
+      );
+      result = { data: await runLambda(functionName, params, retries + 1) };
+    } else {
+      throw error;
     }
-  );
+  }
+
   return result.data;
 };
 
