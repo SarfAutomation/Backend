@@ -95,20 +95,20 @@ const runLambda = async (functionName, params, retries = 0) => {
       }
     );
   } catch (error) {
-    if (error.response && error.response.status === 503) {
-      await new Promise((resolve) =>
-        setTimeout(
-          resolve,
-          Math.min(
-            Math.pow(2, retries) * 1000 + Math.random() * 1000,
-            maxBackoff
-          )
-        )
-      );
-      result = { data: await runLambda(functionName, params, retries + 1) };
-    } else {
+    // if (error.response && error.response.status === 503) {
+    //   await new Promise((resolve) =>
+    //     setTimeout(
+    //       resolve,
+    //       Math.min(
+    //         Math.pow(2, retries) * 1000 + Math.random() * 1000,
+    //         maxBackoff
+    //       )
+    //     )
+    //   );
+    //   result = { data: await runLambda(functionName, params, retries + 1) };
+    // } else {
       throw error;
-    }
+    // }
   }
 
   return result.data;
