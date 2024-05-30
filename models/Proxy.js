@@ -6,20 +6,24 @@ const ProxySchema = new mongoose.Schema({
    **************************************************************************/
   server: {
     type: String,
-    required: true,
+    default: "",
   },
   username: {
     type: String,
-    required: true,
+    default: "",
   },
   password: {
     type: String,
-    required: true,
+    default: "",
   },
   key: {
     type: String,
-    required: true,
+    default: "",
   },
+  linkedinUrl: {
+    type: String,
+    required: true,
+  }
 });
 
 export const Proxy = mongoose.model("Proxy", ProxySchema);

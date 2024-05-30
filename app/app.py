@@ -13,6 +13,9 @@ from search_linkedin import search_linkedin
 from search_sales_nav import search_sales_nav
 from send_dm import send_dm
 from send_inmail import send_inmail
+from get_own_profile import get_own_profile
+from login import login
+from security_code import security_code
 import json
 
 
@@ -32,6 +35,9 @@ def handler(event, context):
         "search_sales_nav": search_sales_nav,
         "send_dm": send_dm,
         "send_inmail": send_inmail,
+        "get_own_profile": get_own_profile,
+        "login": login,
+        "security_code": security_code,
     }
     data = event["body"]
     if isinstance(data, str):

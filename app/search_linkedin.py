@@ -48,7 +48,8 @@ async def search_linkedin(params, headless=True):
                 await page.wait_for_selector(person_selector, timeout=5000)
                 await page.click(person_selector, force=True, timeout=5000)
                 await page.wait_for_timeout(random.randint(1000, 3000))
-                result.append(extract_user_id_from_linkedin_url(page.url))
+                # result.append(extract_user_id_from_linkedin_url(page.url))
+                result.append(page.url)
                 await page.go_back()
                 if len(result) >= amount:
                     break

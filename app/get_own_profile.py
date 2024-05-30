@@ -5,15 +5,14 @@ import random
 
 load_dotenv()
 
-async def get_linkedin_profile(params, headless=True):
+
+async def get_own_profile(params, headless=True):
     async with async_playwright() as p:
         try:
-            linkedin_url = params["linkedin_url"]
             key = params["key"]
         except:
             raise Exception("Missing params")
 
-        # linkedin_url = "https://www.linkedin.com/in/jasonciment/"
         # key = "AQEDAR5mR60C386-AAABjs-h9BAAAAGO8654EFYAnlJkWITqvqUD3WfQNNBMZRzOQLGwMBt7s6N5va13mQ71C2WEWkghD2IdYSy1WHG3OOkC5SIPscZcn9icKjGHyT0uPw-twG031xOKucazzmOpce6G"
 
         args = ["--disable-gpu", "--single-process"] if headless else []
@@ -30,8 +29,13 @@ async def get_linkedin_profile(params, headless=True):
         page = await context.new_page()
         # #agent = WebAgent(page)
         await context.add_cookies([li_at])
-        await page.goto(linkedin_url)
+        await page.goto("https://www.linkedin.com")
         await page.wait_for_timeout(random.randint(1000, 3000))
+        await page.wait_for_selector(".global-nav__primary-link-me-menu-trigger")
+        await page.click(".global-nav__primary-link-me-menu-trigger")
+        await page.wait_for_timeout(random.randint(1000, 3000))
+        await page.wait_for_selector('text="View Profile"')
+        await page.click('text="View Profile"')
 
         # name
         selector = "h1.text-heading-xlarge.inline.t-24.v-align-middle.break-words"
@@ -40,33 +44,20 @@ async def get_linkedin_profile(params, headless=True):
 
         try:
             # Select the main container elements by their class
-            container_elements = await page.query_selector_all('.profile-creator-shared-feed-update__mini-update.display-flex.flex-column')
+            container_elements = await page.query_selector_all(
+                ".profile-creator-shared-feed-update__mini-update.display-flex.flex-column"
+            )
 
             recent_posts = []
             for container in container_elements:
                 # Within each container, find all anchor tags and extract their href attributes
-                link_elements = await container.query_selector_all('a.app-aware-link')
+                link_elements = await container.query_selector_all("a.app-aware-link")
                 for link in link_elements:
-                    url = await link.get_attribute('href')
+                    url = await link.get_attribute("href")
                     if url:  # Ensure the link is not None or empty
                         recent_posts.append(url)
         except:
             recent_posts = []
-
-        try:
-            # mutual
-            selector = "a.app-aware-link.inline-flex.align-items-center.link-without-hover-visited.pt2 span[aria-hidden='true'] strong"
-
-            # Find all strong elements that might contain names
-            mutuals = await page.query_selector_all(selector)
-
-            # Check if names elements exist and extract the first name
-            if mutuals:
-                mutual = await mutuals[0].text_content()
-            else:
-                mutual = None
-        except:
-            mutual = None
 
         try:
             # about
@@ -79,8 +70,8 @@ async def get_linkedin_profile(params, headless=True):
         except:
             about = ""
 
-        # experiences
         try:
+            # experiences
             try:
                 await page.click("#navigation-index-see-all-experiences", timeout=5000)
             except:
@@ -95,7 +86,9 @@ async def get_linkedin_profile(params, headless=True):
                 title_element = await container.query_selector(".t-bold")
                 title = await title_element.text_content() if title_element else "N/A"
 
-                employment_type_element = await container.query_selector(".t-14.t-normal")
+                employment_type_element = await container.query_selector(
+                    ".t-14.t-normal"
+                )
                 employment_type = (
                     await employment_type_element.text_content()
                     if employment_type_element
@@ -136,14 +129,28 @@ async def get_linkedin_profile(params, headless=True):
                 all_experiences.append(experience)
         except:
             all_experiences = []
-
+        url = page.url
         await page.wait_for_timeout(10000)
         await browser.close()
-       
+
         return {
             "name": name,
             "recent_posts": recent_posts,
-            "mutual": mutual,
             "about": about,
             "experiences": all_experiences[:3],
+            "url": url,
         }
+
+
+# import asyncio
+
+# print(
+#     asyncio.run(
+#         get_own_profile(
+#             {
+#                 "key": "AQEDAR5mR60C386-AAABjs-h9BAAAAGO8654EFYAnlJkWITqvqUD3WfQNNBMZRzOQLGwMBt7s6N5va13mQ71C2WEWkghD2IdYSy1WHG3OOkC5SIPscZcn9icKjGHyT0uPw-twG031xOKucazzmOpce6G"
+#             },
+#             headless=False,
+#         )
+#     )
+# )

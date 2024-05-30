@@ -16,12 +16,10 @@ router.post("/check-IC-reply", async (req, res) => {
       try {
         const callbackUrl =
           "https://hooks.zapier.com/hooks/catch/18369368/37u8r8a/";
-        const data = await scheduleJob([
-          "-u",
-          "./automations/get_inmail.py",
-          "-n",
-          name,
-        ]);
+        const data = await scheduleJob("get_inmail", {
+          name: name,
+          key: "AQEDAR5mR60C386-AAABjs-h9BAAAAGO8654EFYAnlJkWITqvqUD3WfQNNBMZRzOQLGwMBt7s6N5va13mQ71C2WEWkghD2IdYSy1WHG3OOkC5SIPscZcn9icKjGHyT0uPw-twG031xOKucazzmOpce6G",
+        });
         const replies = data.messages.filter(
           (message) => message.name != "You"
         );
@@ -162,24 +160,26 @@ router.post("/check-connection", async (req, res) => {
         const data = await scheduleJob("get_recent_connections", {
           key: "AQEDAR5mR60C386-AAABjs-h9BAAAAGO8654EFYAnlJkWITqvqUD3WfQNNBMZRzOQLGwMBt7s6N5va13mQ71C2WEWkghD2IdYSy1WHG3OOkC5SIPscZcn9icKjGHyT0uPw-twG031xOKucazzmOpce6G",
         });
+        console.log(data);
         await Promise.all(
           data.map(async (linkedinUrl) => {
             let salesNavUrl;
             try {
               salesNavUrl = await scheduleJob("get_sales_nav_url", {
                 linkedin_url: linkedinUrl,
+                key: "AQEDAR5mR60C386-AAABjs-h9BAAAAGO8654EFYAnlJkWITqvqUD3WfQNNBMZRzOQLGwMBt7s6N5va13mQ71C2WEWkghD2IdYSy1WHG3OOkC5SIPscZcn9icKjGHyT0uPw-twG031xOKucazzmOpce6G",
               });
             } catch (error) {
               return;
             }
-            if (salesNavUrl.name && salesNavUrl.url) {
-              await axios.post(
-                "https://hooks.zapier.com/hooks/catch/18369368/3nvym70/",
-                {
-                  salesNavUrl,
-                }
-              );
-            }
+            // if (salesNavUrl.name && salesNavUrl.url) {
+            //   await axios.post(
+            //     "https://hooks.zapier.com/hooks/catch/18369368/3nvym70/",
+            //     {
+            //       salesNavUrl,
+            //     }
+            //   );
+            // }
           })
         );
       } catch (error) {
@@ -243,6 +243,114 @@ router.post("/connect-from-search", async (req, res) => {
     };
     job();
     return res.status(200).send("Started");
+  } catch (error) {
+    console.log(error);
+    return res.status(400).send("Something went wrong");
+  }
+});
+
+router.post("/find-post-and-comment", async (req, res) => {
+  const { linkedinUrl, commentedPosts } = req.body;
+  const parsedCommentedPosts = commentedPosts.split(",");
+  console.log(parsedCommentedPosts);
+  try {
+    const job = async () => {
+      try {
+        const linkedinProfile = await scheduleJob("get_linkedin_profile", {
+          linkedin_url: linkedinUrl,
+          key: "AQEDAR5mR60C386-AAABjs-h9BAAAAGO8654EFYAnlJkWITqvqUD3WfQNNBMZRzOQLGwMBt7s6N5va13mQ71C2WEWkghD2IdYSy1WHG3OOkC5SIPscZcn9icKjGHyT0uPw-twG031xOKucazzmOpce6G",
+        });
+        console.log(linkedinProfile);
+        const posts = linkedinProfile.recent_posts.filter(
+          (post) =>
+            parsedCommentedPosts.findIndex(
+              (commentedPost) => commentedPost == post
+            ) < 0
+        );
+        console.log(posts);
+      } catch (error) {
+        console.log("find-post-and-comment ERROR:", error);
+      }
+    };
+    job();
+    return res.status(200).send("Started");
+  } catch (error) {
+    console.log(error);
+    return res.status(400).send("Something went wrong");
+  }
+});
+
+router.post("/linkedin-login", async (req, res) => {
+  const { email, password, proxyServer, proxyUsername, proxyPassword } =
+    req.body;
+  try {
+    const { isLoggedIn, cookie, url, error } = await scheduleJob("login", {
+      email: email,
+      password: password,
+      proxyServer: proxyServer,
+      proxyUsername: proxyUsername,
+      proxyPassword: proxyPassword,
+    });
+    if (error) {
+      return res.status(400).send(error);
+    }
+    if (isLoggedIn) {
+      const profile = await scheduleJob("get_own_profile", {
+        key: cookie.value,
+      });
+      const proxy = await Proxy.findOne({ linkedinUrl: profile.url });
+      if (!proxy) {
+        await Proxy.create({
+          server: proxyServer,
+          username: proxyUsername,
+          password: proxyPassword,
+          key: cookie.value,
+          linkedinUrl: profile.url,
+        });
+      } else {
+        proxy.key = cookie.value;
+        await proxy.save();
+      }
+      return res.status(200).send({ isLoggedIn, cookie });
+    } else {
+      return res.status(200).send({ isLoggedIn, url });
+    }
+  } catch (error) {
+    console.log(error);
+    return res.status(400).send("Something went wrong");
+  }
+});
+
+router.post("/linkedin-security-code", async (req, res) => {
+  const { code, url, proxyServer, proxyUsername, proxyPassword } = req.body;
+  try {
+    const { cookie, error } = await scheduleJob("security_code", {
+      code: code,
+      url: url,
+      proxyServer: proxyServer,
+      proxyUsername: proxyUsername,
+      proxyPassword: proxyPassword,
+    });
+    if (error) {
+      return res.status(400).send(error);
+    }
+    const profile = await scheduleJob("get_own_profile", {
+      key: cookie.value,
+    });
+    const proxy = await Proxy.findOne({ linkedinUrl: profile.url });
+    if (!proxy) {
+      await Proxy.create({
+        server: proxyServer,
+        username: proxyUsername,
+        password: proxyPassword,
+        key: cookie.value,
+        linkedinUrl: profile.url,
+      });
+    } else {
+      proxy.key = cookie.value;
+      await proxy.save();
+    }
+    return res.status(200).send({ cookie });
   } catch (error) {
     console.log(error);
     return res.status(400).send("Something went wrong");

@@ -77,7 +77,7 @@ async def get_inmail(params, headless=True):
             result.append(
                 {"name": sender_name, "time": message_time, "content": message_content}
             )
-        await page.wait_for_timeout(1500)
+        await page.wait_for_timeout(10000)
         await browser.close()
         return {
             "url": "https://www.linkedin.com/" + href,

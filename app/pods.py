@@ -24,13 +24,9 @@ async def comment_on_post(params, headless=True):
             username = f"brd-customer-hl_1752fa58-zone-residential_proxy1-ip-{ip}"
             password = "c1fyk3kmxt8u"
 
-            # server = "http://pr.oxylabs.io:7777"
-            # username = f"customer-zhanhugo-cc-us-st-us_california-city-san_francisco-sessid-0409550444-sesstime-30"
-            # password = "Hugo20010802"
-
-            # server = "http://geo.iproyal.com:12321"
-            # username = f"aCjUz3q5d7LmRI98"
-            # password = "hKNvDElSqMp137Fk"
+            server = "http://brd.superproxy.io:22225"
+            username = "brd-customer-hl_1752fa58-zone-residential_proxy1-gip-18fc1db942000000"
+            password = "c1fyk3kmxt8u"
 
             proxy = {
                 "server": server,
@@ -61,6 +57,8 @@ async def comment_on_post(params, headless=True):
             post_url,
             wait_until="domcontentloaded",
         )
+        await page.wait_for_timeout(1000000)
+
         selector = ".ql-editor"
         await page.wait_for_selector(selector)
         await page.fill(selector, comment)
@@ -77,36 +75,36 @@ import asyncio
 async def main():
     # Create task objects for each function
     tasks = [
+        # comment_on_post(
+        #     {
+        #         "post_url": "https://www.linkedin.com/posts/y-combinator_why-yc-activity-7049158009503051776-N8FG/",
+        #         "comment": "good",
+        #         "key": "AQEDAR5mR60C386-AAABjs-h9BAAAAGO8654EFYAnlJkWITqvqUD3WfQNNBMZRzOQLGwMBt7s6N5va13mQ71C2WEWkghD2IdYSy1WHG3OOkC5SIPscZcn9icKjGHyT0uPw-twG031xOKucazzmOpce6G",
+        #         "ip": None,
+        #     },
+        #     headless=False,
+        # ),
         comment_on_post(
             {
-                "post_url": "https://www.linkedin.com/posts/y-combinator_why-yc-activity-7049158009503051776-N8FG/",
-                "comment": "good",
-                "key": "AQEDAR5mR60C386-AAABjs-h9BAAAAGO8654EFYAnlJkWITqvqUD3WfQNNBMZRzOQLGwMBt7s6N5va13mQ71C2WEWkghD2IdYSy1WHG3OOkC5SIPscZcn9icKjGHyT0uPw-twG031xOKucazzmOpce6G",
-                "ip": None,
-            },
-            headless=False,
-        ),
-        comment_on_post(
-            {
-                "post_url": "https://www.linkedin.com/posts/y-combinator_why-yc-activity-7049158009503051776-N8FG/",
+                "post_url": "https://www.linkedin.com/",
                 "comment": "excellent",
-                "key": "AQEDASypqCIEl1AaAAABjel6ycQAAAGPWRyRAlYAYtde_5NMIdnfBHmWdeHWWI0A56NZWBoDjU0kxNLqBXlZdkwO3LFEHYEx7zu3SYQ_OUN0BXwt7iuQh0UIMjqxIsm1rBlyFeydiT6sqcQNB7CAEeEH",
+                "key": "AQEDAR5mR60C386-AAABjs-h9BAAAAGO8654EFYAnlJkWITqvqUD3WfQNNBMZRzOQLGwMBt7s6N5va13mQ71C2WEWkghD2IdYSy1WHG3OOkC5SIPscZcn9icKjGHyT0uPw-twG031xOKucazzmOpce6G",
                 "ip": "161.77.194.240",
             },
             headless=False,
         ),
-        comment_on_post(
-            {
-                "post_url": "https://www.linkedin.com/posts/y-combinator_why-yc-activity-7049158009503051776-N8FG/",
-                "comment": "impressive",
-                "key": "AQEDASy_h8kCCaUHAAABjptS_jkAAAGPVmNT9E0AZZT2gfCk6kVmp_3nybVyOouQZDkXKnkaLeGqdGLXKc7QtD_u7ctpXzbsfRaaIN61FluyEjvogS4GX9m5MkInF9esmxOxeUj3CnZENBZp4rykXO8z",
-                "ip": "161.77.196.235",
-            },
-            headless=False,
-        ),
+        # comment_on_post(
+        #     {
+        #         "post_url": "https://www.linkedin.com/posts/y-combinator_why-yc-activity-7049158009503051776-N8FG/",
+        #         "comment": "impressive",
+        #         "key": "AQEDASy_h8kCCaUHAAABjptS_jkAAAGPVmNT9E0AZZT2gfCk6kVmp_3nybVyOouQZDkXKnkaLeGqdGLXKc7QtD_u7ctpXzbsfRaaIN61FluyEjvogS4GX9m5MkInF9esmxOxeUj3CnZENBZp4rykXO8z",
+        #         "ip": "161.77.196.235",
+        #     },
+        #     headless=False,
+        # ),
     ]
     # Wait for all tasks to complete
     await asyncio.gather(*tasks)
 
 
-asyncio.run(main())
+# asyncio.run(main())

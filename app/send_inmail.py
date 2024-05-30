@@ -67,11 +67,12 @@ async def send_inmail(params, headless=True):
         await page.wait_for_selector(send_button_selector, state="attached")
         await page.wait_for_timeout(random.randint(1000, 3000))
         button_enabled = await page.is_enabled(send_button_selector)
-        if button_enabled:
-            await page.click(send_button_selector)
-        else:
-            raise Exception("Failed to click send button")
+        # if button_enabled:
+        #     await page.click(send_button_selector)
+        # else:
+        #     raise Exception("Failed to click send button")
         await page.wait_for_timeout(random.randint(1000, 3000))
+        await page.wait_for_timeout(10000)
         selector = f'button:has(span:has-text("Close conversation with {name}"))'
         await page.click(selector)
         await browser.close()

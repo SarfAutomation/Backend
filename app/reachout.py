@@ -3,6 +3,8 @@ from get_linkedin_profile import get_linkedin_profile
 from get_post import get_post
 from comment_on_post import comment_on_post
 from request_connect_linkedin import request_connect_linkedin
+from send_inmail import send_inmail
+from get_inmail import get_inmail
 from time import sleep
 from openai import OpenAI
 from dotenv import load_dotenv
@@ -58,15 +60,14 @@ def main(linkedin_url, key):
         )
     )
 
-    sleep(10)
-
     # use post info to generate message
     message = chat(
-        f"""Generate me a short Linkedin connect message, no more than 3 sentences and 300 charactors. It needs to end with some sort of "happy to connect".
- My goal is to get the person intrigued. And to show that I've done more than 10 minutes of research on him. Basically show I put time into crafting the message.  So it's not just about how well my message describes who he is, or what he does. Must mention something that can't be captured from quickly scanning their profile information. Avoid using strong words like "love, admire, inspiring", they dont seem real. Make it human-like. And keep it conversational, don't write sophisticatedly. 
+        f"""Generate me a very very SHORT Linkedin connect message, no more than 2 sentences and 300 charactors. It needs to end with some sort of "happy to connect".
+ My goal is to get the person intrigued. And to show that I've done more than 10 minutes of research on him. Basically show I put time into crafting the message.  So it's not just about how well my message describes who he is, or what he does. Must mention that I commented on his most recent post: {post_info}. Avoid using strong words like "love, admire, inspiring", they dont seem real. Make it human-like. And keep it conversational, don't write sophisticatedly. 
 Avoid any placeholders
 Here's the profile JSON: {profile_info}"""
     )
+    # message = "Happy to connect!"
     asyncio.run(
         request_connect_linkedin(
             {"linkedin_url": linkedin_url, "content": message, "key": key},
@@ -74,8 +75,41 @@ Here's the profile JSON: {profile_info}"""
         )
     )
 
+    profile_link = "https://www.linkedin.com/sales/lead/ACoAABNKw44BBO32lUyaxYwzxTF9c9K994uiwb8,name,cD5d"
+    subject = "Hello from Hugo!"
+    message = chat(
+        f"""Generate me a very very SHORT Linkedin inmail message, no more than 2 sentences and 300 charactors.
+ My goal is to get the person intrigued about a partnership. And to show that I've done more than 10 minutes of research on him. Basically show I put time into crafting the message.  So it's not just about how well my message describes who he is, or what he does. Must mention that I commented on his recent post: {post_info}. Avoid using strong words like "love, admire, inspiring", they dont seem real. Make it human-like. And keep it conversational, don't write sophisticatedly. 
+Avoid any placeholders
+Here's the profile JSON: {profile_info}"""
+    )
+    asyncio.run(
+        send_inmail(
+            {
+                "profile_link": profile_link,
+                "subject": subject,
+                "message": message,
+                "key": key,
+            },
+            headless=False,
+        )
+    )
 
-linkedin_url = "https://www.linkedin.com/in/jasonciment/"
-key = "AQEDASbk27gCOTjMAAABj2RjiNUAAAGPiHAM1U4AVHQ37gjx1Re_9oa0q3DsqP0skCYLvU27BPD77U9b0uWPmiJSDbWUjvoBWsod_3I_dyw6rzy8W8Gw4NAy9RdrShkNZhOoBOIdVtGfqNLvgcJTDbAe"
-linkedin_url = "https://www.linkedin.com/in/inna-havryliuk-62430926a/"
+    name = "Ron Wilson"
+    asyncio.run(
+        get_inmail(
+            {
+                "name": name,
+                "key": key,
+            },
+            headless=False,
+        )
+    )
+
+
+
+
+linkedin_url = "https://www.linkedin.com/in/vijaypravin/"
+key = "AQEDAR5mR60C386-AAABjs-h9BAAAAGO8654EFYAnlJkWITqvqUD3WfQNNBMZRzOQLGwMBt7s6N5va13mQ71C2WEWkghD2IdYSy1WHG3OOkC5SIPscZcn9icKjGHyT0uPw-twG031xOKucazzmOpce6G"
+# linkedin_url = "https://www.linkedin.com/in/inna-havryliuk-62430926a/"
 main(linkedin_url, key)
