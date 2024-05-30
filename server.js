@@ -1,25 +1,22 @@
 import express from "express";
+import { connectDB } from "./utils/db.js";
 import cors from "cors";
 import bodyParser from "body-parser";
-import { connectDB } from "./utils/db.js";
-import { setup } from "./utils/JobQueue.js";
 import dotenv from "dotenv";
 dotenv.config();
 
 // Connect to MongoDB database
-(async () => {
-  await connectDB();
-  await setup();
-})();
+(async () => await connectDB())();
 
 const app = express();
 const corsOptions = {
   origin: [
-    "http://localhost:3000",
-    "https://network10000-linkedin-automation.vercel.app/"
+    "https://localhost:3000",
+    "https://insect-patient-moose.ngrok-free.app",
+    "https://network10000-linkedin-automation.vercel.app",
   ],
   credentials: true, //access-control-allow-credentials:true
-  optionSuccessStatus: 200,
+  optionsSuccessStatus: 200,
 };
 app.use(cors(corsOptions));
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -37,7 +34,7 @@ app.use("/", home);
 // Real IP Address
 app.set("trust proxy", true);
 
-const port = process.env.PORT || 80;
+const port = process.env.PORT || 5000;
 const server = app.listen(port, () => {
   console.log(`Listening on port ${port}...`);
 });
