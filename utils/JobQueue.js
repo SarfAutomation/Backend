@@ -96,7 +96,7 @@ const runLambda = async (functionName, params) => {
 
 const processJob = async (job) => {
   const { functionName, params } = job.data;
-  // return await runPythonFile(functionName, params);
+  return await runPythonFile(functionName, params);
   return await runLambda(functionName, params);
 };
 

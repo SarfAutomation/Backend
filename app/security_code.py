@@ -7,27 +7,12 @@ import random
 
 load_dotenv()
 
-# Path to the file where the browser context will be stored
-context_file = "browser_context.txt"
-
-
-def save_browser_context(context):
-    with open(context_file, "w") as f:
-        f.write(json.dumps(context))
-
-
-def load_browser_context():
-    if os.path.exists(context_file):
-        with open(context_file, "r") as f:
-            return json.loads(f.read())
-    return None
-
-
 async def security_code(params, headless=True):
     async with async_playwright() as p:
         try:
             url = params["url"]
             code = params["code"]
+            saved_context = params["savedContext"]
             proxy_server = params["proxyServer"]
             proxy_username = params["proxyUsername"]
             proxy_password = params["proxyPassword"]
@@ -41,10 +26,6 @@ async def security_code(params, headless=True):
             "username": proxy_username,
             "password": proxy_password,
         }
-
-        # Load the saved context if it exists
-        saved_context = load_browser_context()
-
         if saved_context:
             context = await browser.new_context(
                 storage_state=saved_context, proxy=proxy, ignore_https_errors=True

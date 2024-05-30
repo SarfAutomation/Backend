@@ -1,18 +1,8 @@
 # from web_agent import WebAgent
 from playwright.async_api import async_playwright
 from dotenv import load_dotenv
-import json
-import os
 
 load_dotenv()
-
-# Path to the file where the browser context will be stored
-context_file = "browser_context.txt"
-
-
-def save_browser_context(context):
-    with open(context_file, "w") as f:
-        f.write(json.dumps(context))
 
 
 async def login(params, headless=True):
@@ -63,13 +53,14 @@ async def login(params, headless=True):
             "#input__email_verification_pin"
         )
         await page.wait_for_timeout(3000)
-        save_browser_context(await context.storage_state())
+        saved_context = await context.storage_state()
         if verification_required:
             await browser.close()
             return {
-                "isLoggedIn": True,
+                "isLoggedIn": False,
                 "cookie": "",
                 "url": page.url,
+                "savedContext": saved_context,
                 "error": "",
             }
         cookies = await context.cookies()
@@ -83,6 +74,7 @@ async def login(params, headless=True):
                 "isLoggedIn": False,
                 "cookie": "",
                 "url": page.url,
+                "savedContext": saved_context,
                 "error": "Login failed. Please check your credentials.",
             }
         else:
@@ -90,6 +82,7 @@ async def login(params, headless=True):
                 "isLoggedIn": True,
                 "cookie": li_at,
                 "url": page.url,
+                "savedContext": saved_context,
                 "error": "",
             }
 

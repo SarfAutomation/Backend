@@ -284,7 +284,7 @@ router.post("/linkedin-login", async (req, res) => {
   const { email, password, proxyServer, proxyUsername, proxyPassword } =
     req.body;
   try {
-    const { isLoggedIn, cookie, url, error } = await scheduleJob("login", {
+    const { isLoggedIn, cookie, url, savedContext, error } = await scheduleJob("login", {
       email: email,
       password: password,
       proxyServer: proxyServer,
@@ -313,7 +313,7 @@ router.post("/linkedin-login", async (req, res) => {
       }
       return res.status(200).send({ isLoggedIn, cookie });
     } else {
-      return res.status(200).send({ isLoggedIn, url });
+      return res.status(200).send({ isLoggedIn, url, savedContext });
     }
   } catch (error) {
     console.log(error);
@@ -322,11 +322,12 @@ router.post("/linkedin-login", async (req, res) => {
 });
 
 router.post("/linkedin-security-code", async (req, res) => {
-  const { code, url, proxyServer, proxyUsername, proxyPassword } = req.body;
+  const { code, url, savedContext, proxyServer, proxyUsername, proxyPassword } = req.body;
   try {
     const { cookie, error } = await scheduleJob("security_code", {
       code: code,
       url: url,
+      savedContext: savedContext,
       proxyServer: proxyServer,
       proxyUsername: proxyUsername,
       proxyPassword: proxyPassword,
