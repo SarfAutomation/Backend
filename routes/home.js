@@ -309,7 +309,7 @@ router.post("/linkedin-login", async (req, res) => {
           password: proxyPassword,
           key: cookie.value,
           // linkedinUrl: profile.url,
-          linkedinUrl: "",
+          linkedinUrl: "tbd",
         });
       } else {
         proxy.key = cookie.value;
@@ -351,7 +351,7 @@ router.post("/linkedin-security-code", async (req, res) => {
         password: proxyPassword,
         key: cookie.value,
         // linkedinUrl: profile.url,
-        linkedinUrl: "",
+        linkedinUrl: "tbd",
       });
     } else {
       proxy.key = cookie.value;
