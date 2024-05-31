@@ -298,9 +298,9 @@ router.post("/linkedin-login", async (req, res) => {
       return res.status(400).send(error);
     }
     if (isLoggedIn) {
-      // const profile = await scheduleJob("get_own_profile", {
-      //   key: cookie.value,
-      // });
+      const profile = await scheduleJob("get_own_profile", {
+        key: cookie.value,
+      });
       const proxy = await Proxy.findOne({ key: cookie.value });
       if (!proxy) {
         await Proxy.create({
@@ -308,8 +308,7 @@ router.post("/linkedin-login", async (req, res) => {
           username: proxyUsername,
           password: proxyPassword,
           key: cookie.value,
-          // linkedinUrl: profile.url,
-          linkedinUrl: "tbd",
+          linkedinUrl: profile.url,
         });
       } else {
         proxy.key = cookie.value;
@@ -340,9 +339,9 @@ router.post("/linkedin-security-code", async (req, res) => {
     if (error) {
       return res.status(400).send(error);
     }
-    // const profile = await scheduleJob("get_own_profile", {
-    //   key: cookie.value,
-    // });
+    const profile = await scheduleJob("get_own_profile", {
+      key: cookie.value,
+    });
     const proxy = await Proxy.findOne({ key: cookie.value });
     if (!proxy) {
       await Proxy.create({
@@ -350,8 +349,7 @@ router.post("/linkedin-security-code", async (req, res) => {
         username: proxyUsername,
         password: proxyPassword,
         key: cookie.value,
-        // linkedinUrl: profile.url,
-        linkedinUrl: "tbd",
+        linkedinUrl: profile.url,
       });
     } else {
       proxy.key = cookie.value;
