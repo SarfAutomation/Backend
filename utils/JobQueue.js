@@ -87,7 +87,7 @@ const runLambda = async (functionName, params, retries = 0) => {
   let result;
   try {
     result = await axios.post(
-      "https://uukusuutzb.execute-api.us-west-1.amazonaws.com/default/LambdaPlaywright",
+      "https://hpmaekrvlqhaffzdxu4qeusqiq0qffgo.lambda-url.us-west-1.on.aws/",
       {
         function_name: functionName,
         params: params,
@@ -116,7 +116,7 @@ const runLambda = async (functionName, params, retries = 0) => {
 
 const processJob = async (job) => {
   const { functionName, params } = job.data;
-  // return await runPythonFile(functionName, params);
+  return await runPythonFile(functionName, params);
   return await runLambda(functionName, params);
 };
 
