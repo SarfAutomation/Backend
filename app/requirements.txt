@@ -6,3 +6,4 @@ aiofiles
 tarsier
 awslambdaric
 python-dotenv
+capsolver

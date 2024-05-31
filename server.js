@@ -11,7 +11,7 @@ dotenv.config();
 const app = express();
 const corsOptions = {
   origin: [
-    "https://localhost:3000",
+    "http://localhost:3000",
     "https://insect-patient-moose.ngrok-free.app",
     "https://network10000-linkedin-automation.vercel.app",
   ],

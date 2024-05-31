@@ -1,8 +1,26 @@
 # from web_agent import WebAgent
 from playwright.async_api import async_playwright
 from dotenv import load_dotenv
+import capsolver
+from urllib.parse import urlparse, parse_qs
 
 load_dotenv()
+
+# Change this information
+capsolver.api_key = "CAP-1174C9DB788891631E0A4168C50041D2"
+
+
+def solve_funcaptcha_linkedin(blob_value):
+    solution = capsolver.solve(
+        {
+            "type": "FunCaptchaTaskProxyLess",
+            "websiteURL": "https://iframe.arkoselabs.com",
+            "websitePublicKey": "3117BF26-4762-4F5A-8ED9-A85E69209A46",
+            "funcaptchaApiJSSubdomain": "https://client-api.arkoselabs.com",
+            "data": f'{{"blob":"{blob_value}"}}',
+        }
+    )
+    return solution
 
 
 async def login(params, headless=True):
@@ -49,6 +67,51 @@ async def login(params, headless=True):
         await page.wait_for_timeout(1000)
         await page.get_by_label("Sign in", exact=True).click()
         await page.wait_for_load_state("domcontentloaded")
+
+        await page.wait_for_timeout(3000)
+        await page.wait_for_selector("iframe")
+        iframe = await page.query_selector("iframe")
+        iframe = await iframe.content_frame()
+        await iframe.wait_for_selector("iframe")
+        iframe = await iframe.query_selector("iframe")
+        iframe_src = await iframe.get_attribute("src")
+        iframe = await iframe.content_frame()
+        await iframe.wait_for_selector("iframe")
+        iframe = await iframe.query_selector("iframe")
+        iframe = await iframe.content_frame()
+        await iframe.wait_for_selector("iframe")
+        iframe = await iframe.query_selector("iframe")
+        iframe = await iframe.content_frame()
+        await iframe.wait_for_selector("iframe")
+        iframe = await iframe.query_selector("iframe")
+        iframe = await iframe.content_frame()
+
+        await iframe.click("button#home_children_button")
+        parsed_url = urlparse(iframe_src)
+        query_params = parse_qs(parsed_url.query)
+        blob_value = query_params["data"][0]
+
+        retries = 0
+        while retries < 3:
+            try:
+                solution = solve_funcaptcha_linkedin(blob_value)
+                token = solution["token"]
+                break
+            except:
+                retries += 1
+
+        await page.evaluate(
+            """(token) => {
+            const input = document.querySelector('input[name="captchaUserResponseToken"]');
+            input.value = token;
+            const form = document.querySelector('form#captcha-challenge');
+            form.submit();
+        }""",
+            token,
+        )
+
+        await page.wait_for_timeout(3000)
+
         verification_required = await page.query_selector(
             "#input__email_verification_pin"
         )
