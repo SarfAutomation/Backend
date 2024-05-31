@@ -68,47 +68,50 @@ async def login(params, headless=True):
         await page.get_by_label("Sign in", exact=True).click()
         await page.wait_for_load_state("domcontentloaded")
 
-        await page.wait_for_timeout(3000)
-        await page.wait_for_selector("iframe")
-        iframe = await page.query_selector("iframe")
-        iframe = await iframe.content_frame()
-        await iframe.wait_for_selector("iframe")
-        iframe = await iframe.query_selector("iframe")
-        iframe_src = await iframe.get_attribute("src")
-        iframe = await iframe.content_frame()
-        await iframe.wait_for_selector("iframe")
-        iframe = await iframe.query_selector("iframe")
-        iframe = await iframe.content_frame()
-        await iframe.wait_for_selector("iframe")
-        iframe = await iframe.query_selector("iframe")
-        iframe = await iframe.content_frame()
-        await iframe.wait_for_selector("iframe")
-        iframe = await iframe.query_selector("iframe")
-        iframe = await iframe.content_frame()
+        try:
+            await page.wait_for_timeout(3000)
+            await page.wait_for_selector("iframe", timeout=5000)
+            iframe = await page.query_selector("iframe")
+            iframe = await iframe.content_frame()
+            await iframe.wait_for_selector("iframe")
+            iframe = await iframe.query_selector("iframe")
+            iframe_src = await iframe.get_attribute("src")
+            iframe = await iframe.content_frame()
+            await iframe.wait_for_selector("iframe")
+            iframe = await iframe.query_selector("iframe")
+            iframe = await iframe.content_frame()
+            await iframe.wait_for_selector("iframe")
+            iframe = await iframe.query_selector("iframe")
+            iframe = await iframe.content_frame()
+            await iframe.wait_for_selector("iframe")
+            iframe = await iframe.query_selector("iframe")
+            iframe = await iframe.content_frame()
 
-        await iframe.click("button#home_children_button")
-        parsed_url = urlparse(iframe_src)
-        query_params = parse_qs(parsed_url.query)
-        blob_value = query_params["data"][0]
+            await iframe.click("button#home_children_button")
+            parsed_url = urlparse(iframe_src)
+            query_params = parse_qs(parsed_url.query)
+            blob_value = query_params["data"][0]
 
-        retries = 0
-        while retries < 3:
-            try:
-                solution = solve_funcaptcha_linkedin(blob_value)
-                token = solution["token"]
-                break
-            except:
-                retries += 1
+            retries = 0
+            while retries < 3:
+                try:
+                    solution = solve_funcaptcha_linkedin(blob_value)
+                    token = solution["token"]
+                    break
+                except:
+                    retries += 1
 
-        await page.evaluate(
-            """(token) => {
-            const input = document.querySelector('input[name="captchaUserResponseToken"]');
-            input.value = token;
-            const form = document.querySelector('form#captcha-challenge');
-            form.submit();
-        }""",
-            token,
-        )
+            await page.evaluate(
+                """(token) => {
+                const input = document.querySelector('input[name="captchaUserResponseToken"]');
+                input.value = token;
+                const form = document.querySelector('form#captcha-challenge');
+                form.submit();
+            }""",
+                token,
+            )
+        except:
+            pass
 
         await page.wait_for_timeout(3000)
 
