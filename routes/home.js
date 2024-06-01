@@ -301,7 +301,7 @@ router.post("/linkedin-login", async (req, res) => {
       const profile = await scheduleJob("get_own_profile", {
         key: cookie.value,
       });
-      const proxy = await Proxy.findOne({ key: cookie.value });
+      const proxy = await Proxy.findOne({ linkedinUrl: profile.url });
       if (!proxy) {
         await Proxy.create({
           server: proxyServer,
@@ -342,7 +342,7 @@ router.post("/linkedin-security-code", async (req, res) => {
     const profile = await scheduleJob("get_own_profile", {
       key: cookie.value,
     });
-    const proxy = await Proxy.findOne({ key: cookie.value });
+    const proxy = await Proxy.findOne({ linkedinUrl: profile.url });
     if (!proxy) {
       await Proxy.create({
         server: proxyServer,
