@@ -9,23 +9,23 @@ dotenv.config();
 const jobQueues = {};
 
 const setup = async () => {
-  const proxies = await Proxy.find({});
-  await Promise.all(
-    proxies.map(async (proxy) => {
-      const jobQueue = new Bull(`${proxy.key}-jobQueue`, {
-        redis: {
-          host: process.env.REDIS_HOST, // e.g., '127.0.0.1'
-          port: process.env.REDIS_PORT, // e.g., 6379
-        },
-      });
-      jobQueues[proxy.key] = jobQueue;
-      await jobQueue.empty();
-      jobQueue.process(processJob);
-      jobQueue.on("active", (job) => {
-        console.log(`Job ${job.id} started`);
-      });
-    })
-  );
+  // const proxies = await Proxy.find({});
+  // await Promise.all(
+  //   proxies.map(async (proxy) => {
+  //     const jobQueue = new Bull(`${proxy.key}-jobQueue`, {
+  //       redis: {
+  //         host: process.env.REDIS_HOST, // e.g., '127.0.0.1'
+  //         port: process.env.REDIS_PORT, // e.g., 6379
+  //       },
+  //     });
+  //     jobQueues[proxy.key] = jobQueue;
+  //     await jobQueue.empty();
+  //     jobQueue.process(processJob);
+  //     jobQueue.on("active", (job) => {
+  //       console.log(`Job ${job.id} started`);
+  //     });
+  //   })
+  // );
 };
 
 const runPythonFile = async (functionName, params) => {
