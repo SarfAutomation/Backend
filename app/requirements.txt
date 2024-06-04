@@ -7,3 +7,4 @@ tarsier
 awslambdaric
 python-dotenv
 capsolver
+playwright-stealth

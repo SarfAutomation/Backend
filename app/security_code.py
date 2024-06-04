@@ -1,13 +1,12 @@
 # from web_agent import WebAgent
 from playwright.async_api import async_playwright
+from utils.page import get_secure_page
 from dotenv import load_dotenv
-import json
-import os
 import random
 
 load_dotenv()
 
-async def security_code(params, headless=True):
+async def security_code(params, proxy=None, headless=True):
     async with async_playwright() as p:
         try:
             url = params["url"]
@@ -27,13 +26,11 @@ async def security_code(params, headless=True):
             "password": proxy_password,
         }
         if saved_context:
-            context = await browser.new_context(
-                storage_state=saved_context, proxy=proxy, ignore_https_errors=True
-            )
+            user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"
+            
+            context, page = await get_secure_page(browser, user_agent, proxy, saved_context=saved_context)
         else:
             raise Exception("No saved browser session found")
-
-        page = await context.new_page()
 
         # agent = WebAgent(page)
         try:

@@ -1,12 +1,13 @@
 # from web_agent import WebAgent
 from playwright.async_api import async_playwright
+from utils.page import get_secure_page
 import random
 from dotenv import load_dotenv
 
 load_dotenv()
 
 
-async def get_post(params, headless=True):
+async def get_post(params, proxy=None, headless=True):
     async with async_playwright() as p:
         try:
             post_url = params["post_url"]
@@ -19,7 +20,10 @@ async def get_post(params, headless=True):
         args = ["--disable-gpu", "--single-process"] if headless else []
         browser = await p.chromium.launch(args=args, headless=headless)
 
-        context = await browser.new_context()
+        user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"
+        
+        context, page = await get_secure_page(browser, user_agent, proxy)
+
         li_at = {
             "name": "li_at",
             "value": key,
@@ -27,7 +31,6 @@ async def get_post(params, headless=True):
             "path": "/",
             "secure": True,
         }
-        page = await context.new_page()
         # agent = WebAgent(page)
         await context.add_cookies([li_at])
         await page.goto(

@@ -1,11 +1,12 @@
 # #from web_agent import WebAgent
 from playwright.async_api import async_playwright
+from utils.page import get_secure_page
 from dotenv import load_dotenv
 import random
 
 load_dotenv()
 
-async def get_linkedin_profile(params, headless=True):
+async def get_linkedin_profile(params, proxy=None, headless=True):
     async with async_playwright() as p:
         try:
             linkedin_url = params["linkedin_url"]
@@ -18,8 +19,9 @@ async def get_linkedin_profile(params, headless=True):
 
         args = ["--disable-gpu", "--single-process"] if headless else []
         browser = await p.chromium.launch(args=args, headless=headless)
+        user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"
+        context, page = await get_secure_page(browser, user_agent, proxy)
 
-        context = await browser.new_context()
         li_at = {
             "name": "li_at",
             "value": key,
@@ -27,7 +29,7 @@ async def get_linkedin_profile(params, headless=True):
             "path": "/",
             "secure": True,
         }
-        page = await context.new_page()
+
         # #agent = WebAgent(page)
         await context.add_cookies([li_at])
         await page.goto(linkedin_url)
@@ -37,6 +39,7 @@ async def get_linkedin_profile(params, headless=True):
         selector = "h1.text-heading-xlarge.inline.t-24.v-align-middle.break-words"
         await page.wait_for_selector(selector)
         name = await page.inner_text(selector)
+        await page.wait_for_timeout(random.randint(1000, 3000))
 
         try:
             # Select the main container elements by their class
@@ -46,10 +49,11 @@ async def get_linkedin_profile(params, headless=True):
             for container in container_elements:
                 # Within each container, find all anchor tags and extract their href attributes
                 link_elements = await container.query_selector_all('a.app-aware-link')
-                for link in link_elements:
-                    url = await link.get_attribute('href')
-                    if url:  # Ensure the link is not None or empty
-                        recent_posts.append(url)
+                link = link_elements[0]
+                url = await link.get_attribute('href')
+                type = await link.get_attribute("aria-label")
+                if url:  # Ensure the link is not None or empty
+                    recent_posts.append({"url": url, "type": type})
         except:
             recent_posts = []
 
@@ -137,7 +141,7 @@ async def get_linkedin_profile(params, headless=True):
         except:
             all_experiences = []
 
-        await page.wait_for_timeout(10000)
+        await page.wait_for_timeout(5000)
         await browser.close()
        
         return {

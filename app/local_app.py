@@ -14,10 +14,12 @@ from search_sales_nav import search_sales_nav
 from send_dm import send_dm
 from send_inmail import send_inmail
 from get_own_profile import get_own_profile
+from get_post import get_post
 from login import login
 from security_code import security_code
 import argparse
 import json
+
 
 def main():
     # Initialize the parser
@@ -52,13 +54,14 @@ def main():
         "send_dm": send_dm,
         "send_inmail": send_inmail,
         "get_own_profile": get_own_profile,
+        "get_post": get_post,
         "login": login,
         "security_code": security_code,
     }
     function = functions[function_name]
     if not function:
         raise Exception(f"Function with name {function_name} does not exist")
-    print(json.dumps(asyncio.run(function(params, headless=False))))
+    print(json.dumps(asyncio.run(function(params, headless=False, proxy=proxy))))
 
 
 main()

@@ -6,7 +6,10 @@ import dotenv from "dotenv";
 dotenv.config();
 
 // Connect to MongoDB database
-(async () => await connectDB())();
+(async () => {
+  await connectDB();
+  await setup();
+})();
 
 const app = express();
 const corsOptions = {
@@ -24,6 +27,7 @@ app.use(bodyParser.json());
 
 // Routers
 import home from "./routes/home.js";
+import { setup } from "./utils/JobQueue.js";
 
 // middleware
 app.use(express.json());

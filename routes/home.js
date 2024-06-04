@@ -2,12 +2,13 @@ import express from "express";
 import dotenv from "dotenv";
 import { Proxy } from "../models/Proxy.js";
 import { scheduleJob } from "../utils/JobQueue.js";
-import { spawn } from "child_process";
 import axios from "axios";
-import { stringify } from "querystring";
+import OpenAI from "openai";
+import { extractJSONFromString } from "../utils/extractJson.js";
 
 dotenv.config();
 const router = express.Router();
+const openai = new OpenAI();
 
 router.post("/check-IC-reply", async (req, res) => {
   try {
@@ -250,7 +251,7 @@ router.post("/connect-from-search", async (req, res) => {
 });
 
 router.post("/find-post-and-comment", async (req, res) => {
-  const { linkedinUrl, commentedPosts } = req.body;
+  const { linkedinUrl, commentedPosts, key } = req.body;
   const parsedCommentedPosts = commentedPosts.split(",");
   console.log(parsedCommentedPosts);
   try {
@@ -258,18 +259,79 @@ router.post("/find-post-and-comment", async (req, res) => {
       try {
         const linkedinProfile = await scheduleJob("get_linkedin_profile", {
           linkedin_url: linkedinUrl,
-          key: "AQEDAR5mR60C386-AAABjs-h9BAAAAGO8654EFYAnlJkWITqvqUD3WfQNNBMZRzOQLGwMBt7s6N5va13mQ71C2WEWkghD2IdYSy1WHG3OOkC5SIPscZcn9icKjGHyT0uPw-twG031xOKucazzmOpce6G",
+          key: key,
         });
         console.log(linkedinProfile);
         const posts = linkedinProfile.recent_posts.filter(
           (post) =>
             parsedCommentedPosts.findIndex(
-              (commentedPost) => commentedPost == post
-            ) < 0
+              (commentedPost) => commentedPost == post.url
+            ) < 0 && post.type.includes("posted")
         );
-        console.log(posts);
+        if (!posts.length) {
+          return;
+        }
+        let post = await scheduleJob("get_post", {
+          post_url: posts[0].url,
+          key: key,
+        });
+        post = { type: posts[0].type, ...post };
+        const response = await openai.chat.completions.create({
+          messages: [
+            {
+              role: "system",
+              content:
+                "You are a comment writer, you will receive a JSON containing information about a linkedin post and generate a short human like comment for this post.",
+            },
+            {
+              role: "user",
+              content: `Here is the post JSON: ${JSON.stringify(
+                post
+              )}, return the comment in the following JSON format: {"comment": "Your comment here"}`,
+            },
+          ],
+          model: "gpt-4o",
+        });
+        const completion = extractJSONFromString(
+          response.choices[0].message.content
+        );
+        const comment = completion.comment;
+        await axios.post(
+          "https://hooks.zapier.com/hooks/catch/18369368/3j74gm9/",
+          {
+            name: linkedinProfile.name,
+            profile: linkedinUrl,
+            post: posts[0],
+            postContent: post,
+            comment,
+          }
+        );
+        console.log(comment);
       } catch (error) {
         console.log("find-post-and-comment ERROR:", error);
+      }
+    };
+    job();
+    return res.status(200).send("Started");
+  } catch (error) {
+    console.log(error);
+    return res.status(400).send("Something went wrong");
+  }
+});
+
+router.post("/send-comment", async (req, res) => {
+  const { postUrl, comment, key } = req.body;
+  console.log(postUrl, comment, key);
+  try {
+    const job = async () => {
+      try {
+        // await scheduleJob("comment_on_post", {
+        //   post_url: postUrl,
+        //   comment: comment,
+        //   key: key,
+        // });
+      } catch (error) {
+        console.log("send-comment ERROR:", error);
       }
     };
     job();
@@ -312,6 +374,9 @@ router.post("/linkedin-login", async (req, res) => {
         });
       } else {
         proxy.key = cookie.value;
+        proxy.server = proxyServer;
+        proxy.username = proxyUsername;
+        proxy.password = proxyPassword;
         await proxy.save();
       }
       return res.status(200).send({ isLoggedIn, cookie });

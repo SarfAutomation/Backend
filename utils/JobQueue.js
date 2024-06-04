@@ -107,7 +107,7 @@ const runLambda = async (functionName, params, retries = 0) => {
     //   );
     //   result = { data: await runLambda(functionName, params, retries + 1) };
     // } else {
-      throw error;
+    throw error;
     // }
   }
 
@@ -116,34 +116,37 @@ const runLambda = async (functionName, params, retries = 0) => {
 
 const processJob = async (job) => {
   const { functionName, params } = job.data;
-  // return await runPythonFile(functionName, params);
+  return await runPythonFile(functionName, params);
   return await runLambda(functionName, params);
 };
 
 async function scheduleJob(functionName, params) {
   return new Promise((resolve, reject) => {
     let jobQueue = jobQueues[params["key"]];
-    if (!jobQueue) {
-      processJob({
-        data: {
+    // if (!jobQueue) {
+    //   processJob({
+    //     data: {
+    //       functionName,
+    //       params,
+    //     },
+    //   })
+    //     .then((result) => {
+    //       resolve(result);
+    //     })
+    //     .catch((error) => {
+    //       console.error(`Job failed`, error);
+    //       reject(error);
+    //     });
+    //   return;
+    // }
+    jobQueue
+      .add(
+        {
           functionName,
           params,
         },
-      })
-        .then((result) => {
-          resolve(result);
-        })
-        .catch((error) => {
-          console.error(`Job failed`, error);
-          reject(error);
-        });
-      return;
-    }
-    jobQueue
-      .add({
-        functionName,
-        params,
-      })
+        { lifo: true }
+      )
       .then((job) => {
         job
           .finished()

@@ -6,7 +6,7 @@ import random
 load_dotenv()
 
 
-async def comment_on_post(params, headless=True):
+async def comment_on_post(params, proxy=None, headless=True):
     async with async_playwright() as p:
         try:
             post_url = params["post_url"]
