@@ -123,22 +123,22 @@ const processJob = async (job) => {
 async function scheduleJob(functionName, params) {
   return new Promise((resolve, reject) => {
     let jobQueue = jobQueues[params["key"]];
-    // if (!jobQueue) {
-    //   processJob({
-    //     data: {
-    //       functionName,
-    //       params,
-    //     },
-    //   })
-    //     .then((result) => {
-    //       resolve(result);
-    //     })
-    //     .catch((error) => {
-    //       console.error(`Job failed`, error);
-    //       reject(error);
-    //     });
-    //   return;
-    // }
+    if (!jobQueue) {
+      processJob({
+        data: {
+          functionName,
+          params,
+        },
+      })
+        .then((result) => {
+          resolve(result);
+        })
+        .catch((error) => {
+          console.error(`Job failed`, error);
+          reject(error);
+        });
+      return;
+    }
     jobQueue
       .add(
         {
