@@ -49,7 +49,7 @@ def handler(event, context):
     print(data)
     function_name = data["function_name"]
     params = data["params"]
-    proxy = data["proxy"]
+    proxy = None if "proxy" not in data else data["proxy"]
     function = functions[function_name]
     if not function:
         raise Exception(f"Function with name {function_name} does not exist")
