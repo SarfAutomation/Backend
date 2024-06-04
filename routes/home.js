@@ -325,11 +325,11 @@ router.post("/send-comment", async (req, res) => {
   try {
     const job = async () => {
       try {
-        // await scheduleJob("comment_on_post", {
-        //   post_url: postUrl,
-        //   comment: comment,
-        //   key: key,
-        // });
+        await scheduleJob("comment_on_post", {
+          post_url: postUrl,
+          comment: comment,
+          key: key,
+        });
       } catch (error) {
         console.log("send-comment ERROR:", error);
       }

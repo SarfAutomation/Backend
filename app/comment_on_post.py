@@ -43,8 +43,8 @@ async def comment_on_post(params, proxy=None, headless=True):
         await page.wait_for_selector(selector)
         await page.fill(selector, comment)
         await page.wait_for_timeout(random.randint(1000, 3000))
-        # selector = ".comments-comment-box__submit-button.artdeco-button--primary"
-        # await page.click(".comments-comment-box__submit-button.artdeco-button--primary")
+        selector = ".comments-comment-box__submit-button.artdeco-button--primary"
+        await page.click(".comments-comment-box__submit-button.artdeco-button--primary")
         await page.wait_for_timeout(10000)
         await browser.close()
 

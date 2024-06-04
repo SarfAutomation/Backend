@@ -49,10 +49,11 @@ def handler(event, context):
     print(data)
     function_name = data["function_name"]
     params = data["params"]
+    proxy = data["proxy"]
     function = functions[function_name]
     if not function:
         raise Exception(f"Function with name {function_name} does not exist")
-    result = asyncio.run(function(params))
+    result = asyncio.run(function(params, proxy=proxy))
     return {
         "statusCode": 200,
         "headers": {"Content-Type": "application/json"},
