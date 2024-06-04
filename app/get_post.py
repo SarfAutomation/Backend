@@ -37,10 +37,13 @@ async def get_post(params, proxy=None, headless=True):
             post_url,
             wait_until="domcontentloaded",
         )
-        selector = ".feed-shared-update-v2__description-wrapper.mr2"
-        await page.wait_for_selector(selector)
-        element = await page.query_selector(selector)
-        post_description = await element.text_content()
+        try:
+            selector = ".feed-shared-update-v2__description-wrapper.mr2"
+            await page.wait_for_selector(selector)
+            element = await page.query_selector(selector)
+            post_description = await element.text_content()
+        except:
+            post_description = "Post description not found"
         detail_elements = await page.query_selector("div.update-components-actor")
         name_element = await detail_elements.query_selector(
             ".update-components-actor__name"
