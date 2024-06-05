@@ -5,6 +5,7 @@ import { scheduleJob } from "../utils/JobQueue.js";
 import axios from "axios";
 import OpenAI from "openai";
 import { extractJSONFromString } from "../utils/extractJson.js";
+import { content } from "googleapis/build/src/apis/content/index.js";
 
 dotenv.config();
 const router = express.Router();
@@ -250,7 +251,7 @@ router.post("/connect-from-search", async (req, res) => {
   }
 });
 
-router.post("/find-post-and-comment", async (req, res) => {
+router.post("/generate-comment", async (req, res) => {
   const { linkedinUrl, commentedPosts, key } = req.body;
   const parsedCommentedPosts = commentedPosts.split(",");
   console.log(parsedCommentedPosts);
@@ -328,6 +329,82 @@ router.post("/send-comment", async (req, res) => {
         await scheduleJob("comment_on_post", {
           post_url: postUrl,
           comment: comment,
+          key: key,
+        });
+      } catch (error) {
+        console.log("send-comment ERROR:", error);
+      }
+    };
+    job();
+    return res.status(200).send("Started");
+  } catch (error) {
+    console.log(error);
+    return res.status(400).send("Something went wrong");
+  }
+});
+
+router.post("/generate-cr-message", async (req, res) => {
+  const { linkedinUrl, comments, key } = req.body;
+  console.log(linkedinUrl, key);
+  try {
+    const job = async () => {
+      try {
+        const linkedinProfile = await scheduleJob("get_linkedin_profile", {
+          linkedin_url: linkedinUrl,
+          key: key,
+        });
+        console.log(linkedinProfile);
+        const response = await openai.chat.completions.create({
+          messages: [
+            {
+              role: "system",
+              content:
+                "You are a connection request message writer, you will receive a JSON containing information about a linkedin profile and generate a very short human like message to connect with profile.",
+            },
+            {
+              role: "user",
+              content: `Here is the linkedin profile JSON: ${JSON.stringify(
+                linkedinProfile
+              )}, and here is what the user has commented on this person's post before ${comments}. return the message in the following JSON format: {"message": "Your connection request message here"}`,
+            },
+          ],
+          model: "gpt-4o",
+        });
+        const completion = extractJSONFromString(
+          response.choices[0].message.content
+        );
+        const message = completion.message;
+        await axios.post(
+          "https://hooks.zapier.com/hooks/catch/18369368/2ylmgl2/",
+          {
+            name: linkedinProfile.name,
+            profile: { url: linkedinUrl, ...linkedinProfile },
+            comments: comments,
+            message: message,
+          }
+        );
+        console.log(message);
+      } catch (error) {
+        console.log("send-comment ERROR:", error);
+      }
+    };
+    job();
+    return res.status(200).send("Started");
+  } catch (error) {
+    console.log(error);
+    return res.status(400).send("Something went wrong");
+  }
+});
+
+router.post("/send-cr-message", async (req, res) => {
+  const { linkedinUrl, message, key } = req.body;
+  console.log(linkedinUrl, message, key);
+  try {
+    const job = async () => {
+      try {
+        await scheduleJob("request_connect_linkedin", {
+          linkedin_url: linkedinUrl,
+          content: message,
           key: key,
         });
       } catch (error) {

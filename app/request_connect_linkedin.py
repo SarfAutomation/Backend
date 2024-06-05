@@ -69,10 +69,10 @@ async def request_connect_linkedin(params, proxy=None, headless=True):
                 'textarea[name="message"]',
                 content,
             )
-            # await page.wait_for_timeout(random.randint(1000, 3000))
-            # await page.click(
-            #     ".artdeco-button.artdeco-button--2.artdeco-button--primary.ember-view.ml1"
-            # )
+            await page.wait_for_timeout(random.randint(1000, 3000))
+            await page.click(
+                ".artdeco-button.artdeco-button--2.artdeco-button--primary.ember-view.ml1"
+            )
             await page.wait_for_timeout(10000)
 
         await browser.close()
