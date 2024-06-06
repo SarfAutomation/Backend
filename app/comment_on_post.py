@@ -16,13 +16,11 @@ async def comment_on_post(params, proxy=None, headless=True):
         except:
             raise Exception("Missing params")
 
-        # key = "AQEDAR5mR60C386-AAABjs-h9BAAAAGO8654EFYAnlJkWITqvqUD3WfQNNBMZRzOQLGwMBt7s6N5va13mQ71C2WEWkghD2IdYSy1WHG3OOkC5SIPscZcn9icKjGHyT0uPw-twG031xOKucazzmOpce6G"
-
         args = ["--disable-gpu", "--single-process"] if headless else []
         browser = await p.chromium.launch(args=args, headless=headless)
 
         user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"
-        
+
         context, page = await get_secure_page(browser, user_agent, proxy)
 
         li_at = {
@@ -39,20 +37,31 @@ async def comment_on_post(params, proxy=None, headless=True):
             post_url,
             wait_until="domcontentloaded",
         )
-        selector = '.ql-editor'
+        selector = 'button[aria-label="React Like"]'
+        await page.wait_for_selector(selector)
+        await page.click(selector)
+        await page.wait_for_timeout(random.randint(1000, 3000))
+        selector = ".ql-editor"
         await page.wait_for_selector(selector)
         await page.fill(selector, comment)
         await page.wait_for_timeout(random.randint(1000, 3000))
         selector = ".comments-comment-box__submit-button.artdeco-button--primary"
         await page.click(".comments-comment-box__submit-button.artdeco-button--primary")
-        await page.wait_for_timeout(10000)
+        await page.wait_for_timeout(random.randint(1000, 3000))
         await browser.close()
 
 
 # import asyncio
 
+# key = "AQEDAUcY98sDtbmOAAABj-HmvAAAAAGQBfNAAFYAdr7zDsd59vbrHUV2bV3lMzGRyvkcTbM_CIN4QcC5KCn-jn3EzY7avkPFJDbN2FvsPBrcoXWfle5exbZrORzw8gUYFdox8PFaniEQzlcId1q6_lvn"
+
 # asyncio.run(
 #     comment_on_post(
-#         {"post_url": "https://www.linkedin.com/posts/y-combinator_why-yc-activity-7049158009503051776-N8FG/", "comment": "hi", "key": ""}, headless=False
+#         {
+#             "post_url": "https://www.linkedin.com/posts/songanglu_big-news-brewit-yc-w23-now-supports-activity-7204157548009050113-Jhwd/?utm_source=share&utm_medium=member_desktop",
+#             "comment": "hi",
+#             "key": key,
+#         },
+#         headless=False,
 #     )
 # )

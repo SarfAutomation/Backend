@@ -40,6 +40,9 @@ async def get_own_profile(params, proxy=None, headless=True):
         await page.wait_for_selector('text="View Profile"')
         await page.click('text="View Profile"')
 
+        await page.wait_for_timeout(random.randint(1000, 3000))
+        url = page.url
+
         # name
         selector = "h1.text-heading-xlarge.inline.t-24.v-align-middle.break-words"
         await page.wait_for_selector(selector)
@@ -56,10 +59,10 @@ async def get_own_profile(params, proxy=None, headless=True):
                 # Within each container, find all anchor tags and extract their href attributes
                 link_elements = await container.query_selector_all('a.app-aware-link')
                 link = link_elements[0]
-                url = await link.get_attribute('href')
+                post_url = await link.get_attribute('href')
                 type = await link.get_attribute("aria-label")
-                if url:  # Ensure the link is not None or empty
-                    recent_posts.append({"url": url, "type": type})
+                if post_url:  # Ensure the link is not None or empty
+                    recent_posts.append({"url": post_url, "type": type})
         except:
             recent_posts = []
 
@@ -133,7 +136,6 @@ async def get_own_profile(params, proxy=None, headless=True):
                 all_experiences.append(experience)
         except:
             all_experiences = []
-        url = page.url
         await page.wait_for_timeout(10000)
         await browser.close()
 

@@ -321,16 +321,25 @@ router.post("/generate-comment", async (req, res) => {
 });
 
 router.post("/send-comment", async (req, res) => {
-  const { postUrl, comment, key } = req.body;
+  const { postUrl, comment, key, name, profile } = req.body;
   console.log(postUrl, comment, key);
   try {
     const job = async () => {
       try {
-        await scheduleJob("comment_on_post", {
-          post_url: postUrl,
-          comment: comment,
-          key: key,
-        });
+        // await scheduleJob("comment_on_post", {
+        //   post_url: postUrl,
+        //   comment: comment,
+        //   key: key,
+        // });
+        await axios.post(
+          "https://hooks.zapier.com/hooks/catch/18369368/2y7kzna/",
+          {
+            postUrl,
+            comment,
+            name,
+            profile,
+          }
+        );
       } catch (error) {
         console.log("send-comment ERROR:", error);
       }
@@ -398,7 +407,6 @@ router.post("/generate-cr-message", async (req, res) => {
 
 router.post("/send-cr-message", async (req, res) => {
   const { linkedinUrl, message, key } = req.body;
-  console.log(linkedinUrl, message, key);
   try {
     const job = async () => {
       try {
@@ -407,6 +415,13 @@ router.post("/send-cr-message", async (req, res) => {
           content: message,
           key: key,
         });
+        await axios.post(
+          "https://hooks.zapier.com/hooks/catch/18369368/2yjufiy/",
+          {
+            profile: linkedinUrl,
+            message: message,
+          }
+        );
       } catch (error) {
         console.log("send-comment ERROR:", error);
       }
