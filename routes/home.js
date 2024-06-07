@@ -434,6 +434,177 @@ router.post("/send-cr-message", async (req, res) => {
   }
 });
 
+router.post("/add-from-sales-nav-search", async (req, res) => {
+  const { searchUrl, key } = req.body;
+  try {
+    const job = async () => {
+      try {
+        // const result = await scheduleJob("search_sales_nav", {
+        //   search_url: searchUrl,
+        //   key: key,
+        //   amount: 20,
+        // });
+        const result = [
+          {
+            name: "Prashant SK Shriyan",
+            url: "https://www.linkedin.com/sales/lead/ACwAAB8kFDABtukMw5Neq1rihbvlbQoNE3kHLPQ,NAME_SEARCH,0enc?_ntb=iWPfJTyQQkSan6%2B6oe0FLQ%3D%3D",
+            isOpen: true,
+          },
+          {
+            name: "Rima SBEI",
+            url: "https://www.linkedin.com/sales/lead/ACwAACpmalIBW40jx343F8nUeOI9aO9WiyzYfdo,NAME_SEARCH,Qr40?_ntb=iWPfJTyQQkSan6%2B6oe0FLQ%3D%3D",
+            isOpen: false,
+          },
+          // {
+          //   name: "Atis Mertens",
+          //   url: "https://www.linkedin.com/sales/lead/ACwAAAtCduMBJu1NnSmXoFKxVD9u5U49HFwHySc,NAME_SEARCH,zFjY?_ntb=iWPfJTyQQkSan6%2B6oe0FLQ%3D%3D",
+          //   isOpen: true,
+          // },
+          // {
+          //   name: "Nilesh Patil",
+          //   url: "https://www.linkedin.com/sales/lead/ACwAAA13bqcB2QbUHjYNfh2ENVoQHeZh9JAzggM,NAME_SEARCH,Be8A?_ntb=iWPfJTyQQkSan6%2B6oe0FLQ%3D%3D",
+          //   isOpen: true,
+          // },
+          // {
+          //   name: "Tudor Brad",
+          //   url: "https://www.linkedin.com/sales/lead/ACwAAApV5eIBAU-iBSYEAuKep4COUE6xobo0Uxk,NAME_SEARCH,731Z?_ntb=iWPfJTyQQkSan6%2B6oe0FLQ%3D%3D",
+          //   isOpen: false,
+          // },
+          // {
+          //   name: "Mariia Chesnova",
+          //   url: "https://www.linkedin.com/sales/lead/ACwAADFFbggBnQVw8yCk3Fla0lThlbAFO2KImFg,NAME_SEARCH,F30G?_ntb=iWPfJTyQQkSan6%2B6oe0FLQ%3D%3D",
+          //   isOpen: false,
+          // },
+          // {
+          //   name: "Matt Stager",
+          //   url: "https://www.linkedin.com/sales/lead/ACwAAAAfc34BfyH0rXUaE8m7-wPX038-p9T6qs4,NAME_SEARCH,Crg4?_ntb=iWPfJTyQQkSan6%2B6oe0FLQ%3D%3D",
+          //   isOpen: true,
+          // },
+          // {
+          //   name: "Supriya Chavan",
+          //   url: "https://www.linkedin.com/sales/lead/ACwAADX05dsBWxGewX8kIit07RSrjoyIe4iJnos,NAME_SEARCH,Zgb3?_ntb=iWPfJTyQQkSan6%2B6oe0FLQ%3D%3D",
+          //   isOpen: false,
+          // },
+          // {
+          //   name: "Marco Avila",
+          //   url: "https://www.linkedin.com/sales/lead/ACwAAAp3zyQBNev9G-nc1vNHvyhTN8ZpRx20zbI,NAME_SEARCH,7zdx?_ntb=iWPfJTyQQkSan6%2B6oe0FLQ%3D%3D",
+          //   isOpen: false,
+          // },
+          // {
+          //   name: "Rex Kumi",
+          //   url: "https://www.linkedin.com/sales/lead/ACwAAAxTiqQBK4egPmIlSUHGtQMiTjzVUWSOnsY,NAME_SEARCH,_r2C?_ntb=iWPfJTyQQkSan6%2B6oe0FLQ%3D%3D",
+          //   isOpen: false,
+          // },
+          // {
+          //   name: "Chandan Mishra",
+          //   url: "https://www.linkedin.com/sales/lead/ACwAACiA7DwBZ1Rq_ro81XsrPOWi7U3OaWSBuJM,NAME_SEARCH,J_c-?_ntb=iWPfJTyQQkSan6%2B6oe0FLQ%3D%3D",
+          //   isOpen: false,
+          // },
+          // {
+          //   name: "Ting Qiu",
+          //   url: "https://www.linkedin.com/sales/lead/ACwAAApiP3AB5uqN2rm5jbAFW7NuhCewp4iEpfc,NAME_SEARCH,-9mK?_ntb=iWPfJTyQQkSan6%2B6oe0FLQ%3D%3D",
+          //   isOpen: false,
+          // },
+          // {
+          //   name: "Aakash Kehar",
+          //   url: "https://www.linkedin.com/sales/lead/ACwAAAQLKIkBaBG6Rql7Hswf5iM61StJqr0xfcU,NAME_SEARCH,TMXf?_ntb=iWPfJTyQQkSan6%2B6oe0FLQ%3D%3D",
+          //   isOpen: true,
+          // },
+          // {
+          //   name: "Manuel Lopez Insausti",
+          //   url: "https://www.linkedin.com/sales/lead/ACwAAAI0YVUBf89to_vRvWxf06-0529GDlH6gWA,NAME_SEARCH,w4Fm?_ntb=iWPfJTyQQkSan6%2B6oe0FLQ%3D%3D",
+          //   isOpen: false,
+          // },
+          // {
+          //   name: "Max Shulgin",
+          //   url: "https://www.linkedin.com/sales/lead/ACwAACRO7UUBtF7gHQ_4_u7Fvmljm8DyY2MpsVs,NAME_SEARCH,FZ9B?_ntb=iWPfJTyQQkSan6%2B6oe0FLQ%3D%3D",
+          //   isOpen: false,
+          // },
+          // {
+          //   name: "Akshay M",
+          //   url: "https://www.linkedin.com/sales/lead/ACwAADjXHY4BR5Rk07uGXysJmxpol58V9f6CyMc,NAME_SEARCH,5Tmi?_ntb=iWPfJTyQQkSan6%2B6oe0FLQ%3D%3D",
+          //   isOpen: false,
+          // },
+          // {
+          //   name: "Vyacheslav(Slava) Meyerzon",
+          //   url: "https://www.linkedin.com/sales/lead/ACwAABP3SdIBU3vdowMuqucIG7ROWiOdbHGiB3g,NAME_SEARCH,l0P6?_ntb=iWPfJTyQQkSan6%2B6oe0FLQ%3D%3D",
+          //   isOpen: true,
+          // },
+          // {
+          //   name: "Clay Bennett",
+          //   url: "https://www.linkedin.com/sales/lead/ACwAABMuWPcBYF806jCz8bqtXrq-TEjzMy_wZJ4,NAME_SEARCH,-tVA?_ntb=iWPfJTyQQkSan6%2B6oe0FLQ%3D%3D",
+          //   isOpen: true,
+          // },
+          // {
+          //   name: "Tarek Kassem",
+          //   url: "https://www.linkedin.com/sales/lead/ACwAABgCb28BdOAAY7hPt9JYU8aNwq1RSUhyZg0,NAME_SEARCH,PeS2?_ntb=iWPfJTyQQkSan6%2B6oe0FLQ%3D%3D",
+          //   isOpen: true,
+          // },
+          // {
+          //   name: "Karya Boyraz",
+          //   url: "https://www.linkedin.com/sales/lead/ACwAADQ8hKwBkrTtkOy8cV69DOmRlJJhS1iMfJg,NAME_SEARCH,Rcup?_ntb=iWPfJTyQQkSan6%2B6oe0FLQ%3D%3D",
+          //   isOpen: true,
+          // },
+          // {
+          //   name: "Suranjan Rudra",
+          //   url: "https://www.linkedin.com/sales/lead/ACwAACXCg8AByNBZD0zMdoL7i00yjVfmf3toGDk,NAME_SEARCH,Ze88?_ntb=iWPfJTyQQkSan6%2B6oe0FLQ%3D%3D",
+          //   isOpen: false,
+          // },
+          // {
+          //   name: "Yaroslav Savka",
+          //   url: "https://www.linkedin.com/sales/lead/ACwAACjzU0ABWLEiH7-uifs5j6CmMnzqlwO9UsA,NAME_SEARCH,2wJk?_ntb=iWPfJTyQQkSan6%2B6oe0FLQ%3D%3D",
+          //   isOpen: false,
+          // },
+          // {
+          //   name: "Evangelos Papadopoulos",
+          //   url: "https://www.linkedin.com/sales/lead/ACwAAAPBXE4BjG1qhL8zFV0R0QxaoqhVvxt2yXk,NAME_SEARCH,3JSE?_ntb=iWPfJTyQQkSan6%2B6oe0FLQ%3D%3D",
+          //   isOpen: false,
+          // },
+          // {
+          //   name: "Shaik Wahab",
+          //   url: "https://www.linkedin.com/sales/lead/ACwAAAdlUkgBVAeUnpKsZX5MIJqikcD4390mVWw,NAME_SEARCH,XLRx?_ntb=iWPfJTyQQkSan6%2B6oe0FLQ%3D%3D",
+          //   isOpen: false,
+          // },
+          // {
+          //   name: "Flemming Simonsen",
+          //   url: "https://www.linkedin.com/sales/lead/ACwAAAEEI3IBmp8jHBArVc6xzUAu5HZZFEdQpxo,NAME_SEARCH,Kxdu?_ntb=iWPfJTyQQkSan6%2B6oe0FLQ%3D%3D",
+          //   isOpen: false,
+          // },
+        ];
+        await Promise.all(
+          result.map(async (profile) => {
+            try {
+              console.log("bruh", profile)
+              const linkedin = await scheduleJob("get_linkedin_url", {
+                sales_nav_url: profile.url,
+                key: key,
+              });
+              console.log("lmfao", profile)
+              console.log(linkedin);
+              await axios.post(
+                "https://hooks.zapier.com/hooks/catch/18369368/2oyv0vs/",
+                {
+                  name: profile.name,
+                  profile: linkedin.url,
+                }
+              );
+            } catch (error) {
+              console.log(error);
+            }
+          })
+        );
+      } catch (error) {
+        console.log("add-from-sales-nav-search ERROR:", error);
+      }
+    };
+    job();
+    return res.status(200).send("Started");
+  } catch (error) {
+    console.log(error);
+    return res.status(400).send("Something went wrong");
+  }
+});
+
 router.post("/linkedin-login", async (req, res) => {
   const { email, password, proxyServer, proxyUsername, proxyPassword } =
     req.body;

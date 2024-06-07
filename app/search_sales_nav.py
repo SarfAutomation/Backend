@@ -44,6 +44,7 @@ async def search_sales_nav(params, proxy=None, headless=True):
         try:
             search_url = params["search_url"] 
             key = params["key"]
+            amount = params["amount"]
         except:
             raise Exception("Missing params")
 
@@ -69,9 +70,11 @@ async def search_sales_nav(params, proxy=None, headless=True):
         await context.add_cookies([li_at])
         page_count = 1
         result = []
-        open_count = 0
-        close_count = 0
-        while open_count < amount:
+        # open_count = 0
+        # close_count = 0
+        # while open_count < amount:
+        count = 0
+        while count < amount:
             await page.goto(
                 f"{search_url}&page={page_count}",
                 wait_until="domcontentloaded",
@@ -82,13 +85,13 @@ async def search_sales_nav(params, proxy=None, headless=True):
             await scroll_within_element_and_check(page, scrollable_element_selector)
             list_items = await page.query_selector_all(selector)
             for item in list_items:
-                if open_count >= amount:
-                    break
+                # if open_count >= amount:
+                #     break
                 premium_icon = await item.query_selector(
                     'li-icon[type="linkedin-premium-gold-icon"]'
                 )
-                if not premium_icon and close_count > amount:
-                    continue
+                # if not premium_icon and close_count > amount:
+                #     continue
                 name_element = await item.query_selector(
                     'span[data-anonymize="person-name"]'
                 )
@@ -121,10 +124,11 @@ async def search_sales_nav(params, proxy=None, headless=True):
                         "isOpen": premium_icon is not None,
                     }
                 )
-                if premium_icon:
-                    open_count += 1
-                else:
-                    close_count += 1
+                # if premium_icon:
+                #     open_count += 1
+                # else:
+                #     close_count += 1
+                count += 1
             page_count += 1
         await browser.close()
         return result

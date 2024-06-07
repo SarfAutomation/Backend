@@ -5,6 +5,7 @@ from comment_on_post import comment_on_post
 from get_dm import get_dm
 from get_inmail import get_inmail
 from get_linkedin_profile import get_linkedin_profile
+from get_linkedin_url import get_linkedin_url
 from get_recent_connections import get_recent_connections
 from get_sales_nav_url import get_sales_nav_url
 from request_connect_linkedin import request_connect_linkedin
@@ -45,6 +46,7 @@ def main():
         "get_dm": get_dm,
         "get_inmail": get_inmail,
         "get_linkedin_profile": get_linkedin_profile,
+        "get_linkedin_url": get_linkedin_url,
         "get_recent_connections": get_recent_connections,
         "get_sales_nav_url": get_sales_nav_url,
         "request_connect_linkedin": request_connect_linkedin,
