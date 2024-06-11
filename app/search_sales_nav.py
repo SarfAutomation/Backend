@@ -49,7 +49,7 @@ async def search_sales_nav(params, proxy=None, headless=True):
             raise Exception("Missing params")
 
         # search_url = "https://www.linkedin.com/sales/search/people?recentSearchId=3638734740&sessionId=8nfRO4D1Q9C5yn5bwKzSLw%3D%3D&viewAllFilters=true"
-        amount = 15
+        # amount = 15
         # key = "AQEDAR5mR60C386-AAABjs-h9BAAAAGO8654EFYAnlJkWITqvqUD3WfQNNBMZRzOQLGwMBt7s6N5va13mQ71C2WEWkghD2IdYSy1WHG3OOkC5SIPscZcn9icKjGHyT0uPw-twG031xOKucazzmOpce6G"
 
         args = ["--disable-gpu", "--single-process"] if headless else []
@@ -85,8 +85,8 @@ async def search_sales_nav(params, proxy=None, headless=True):
             await scroll_within_element_and_check(page, scrollable_element_selector)
             list_items = await page.query_selector_all(selector)
             for item in list_items:
-                # if open_count >= amount:
-                #     break
+                if count >= amount:
+                    break
                 premium_icon = await item.query_selector(
                     'li-icon[type="linkedin-premium-gold-icon"]'
                 )

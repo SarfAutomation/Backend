@@ -1,4 +1,4 @@
-#from web_agent import WebAgent
+# from web_agent import WebAgent
 from playwright.async_api import async_playwright
 from utils.page import get_secure_page
 from dotenv import load_dotenv
@@ -29,7 +29,7 @@ async def add_sales_nav_list(params, proxy=None, headless=True):
         browser = await p.chromium.launch(args=args, headless=headless)
 
         user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"
-        
+
         context, page = await get_secure_page(browser, user_agent, proxy)
 
         li_at = {
@@ -39,7 +39,7 @@ async def add_sales_nav_list(params, proxy=None, headless=True):
             "path": "/",
             "secure": True,
         }
-        #agent = WebAgent(page)
+        
         await context.add_cookies([li_at])
         await page.goto(
             profile_link,
@@ -50,5 +50,19 @@ async def add_sales_nav_list(params, proxy=None, headless=True):
         await page.wait_for_timeout(random.randint(1000, 3000))
         await page.wait_for_selector(f"text={list}", state="visible")
         await page.click(f"text={list}")
-        await page.wait_for_timeout(1500)
+        await page.wait_for_timeout(random.randint(1000, 3000))
         await browser.close()
+
+
+# import asyncio
+
+# asyncio.run(
+#     add_sales_nav_list(
+#         {
+#             "profile_link": "https://www.linkedin.com/sales/lead/ACwAAAMVEXABsl8VD2KrgEnF-_i5p5-91p_FB6Y,NAME_SEARCH,sNNr",
+#             "list": "AQEDAUcY98sDtbmOAAABj-HmvAAAAAGQBfNAAFYAdr7zDsd59vbrHUV2bV3lMzGRyvkcTbM_CIN",
+#             "key": "AQEDAUcY98sDtbmOAAABj-HmvAAAAAGQBfNAAFYAdr7zDsd59vbrHUV2bV3lMzGRyvkcTbM_CIN4QcC5KCn-jn3EzY7avkPFJDbN2FvsPBrcoXWfle5exbZrORzw8gUYFdox8PFaniEQzlcId1q6_lvn",
+#         },
+#         headless=False,
+#     )
+# )

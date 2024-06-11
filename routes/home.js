@@ -439,35 +439,41 @@ router.post("/send-cr-message", async (req, res) => {
 });
 
 router.post("/add-from-sales-nav-search", async (req, res) => {
-  const { searchUrl, key } = req.body;
+  const { searchUrl, key, amount } = req.body;
+  const ludiKey =
+    "AQEDAUcY98sDtbmOAAABj-HmvAAAAAGQBfNAAFYAdr7zDsd59vbrHUV2bV3lMzGRyvkcTbM_CIN4QcC5KCn-jn3EzY7avkPFJDbN2FvsPBrcoXWfle5exbZrORzw8gUYFdox8PFaniEQzlcId1q6_lvn";
   try {
     const job = async () => {
       try {
-        const result = await scheduleJob("search_sales_nav", {
+        const profiles = await scheduleJob("search_sales_nav", {
           search_url: searchUrl,
-          key: key,
-          amount: 100,
+          key: ludiKey,
+          amount: amount,
         });
-        await Promise.all(
-          result.map(async (profile) => {
-            try {
-              const linkedin = await scheduleJob("get_linkedin_url", {
-                sales_nav_url: profile.url,
+        for (const profile of profiles) {
+          try {
+            const { name, url } = profile;
+            const linkedin = await scheduleJob("get_linkedin_url", {
+              sales_nav_url: url,
+              key: ludiKey,
+            });
+            await axios.post(
+              "https://hooks.zapier.com/hooks/catch/18369368/2oyv0vs/",
+              {
+                name: name,
+                profile: linkedin.url,
                 key: key,
-              });
-              await axios.post(
-                "https://hooks.zapier.com/hooks/catch/18369368/2oyv0vs/",
-                {
-                  name: profile.name,
-                  profile: linkedin.url,
-                  key: key,
-                }
-              );
-            } catch (error) {
-              console.log(error);
-            }
-          })
-        );
+              }
+            );
+            await scheduleJob("add_sales_nav_list", {
+              profile_link: url,
+              list: key.slice(0, 75),
+              key: ludiKey,
+            });
+          } catch (error) {
+            console.log(error);
+          }
+        }
       } catch (error) {
         console.log("add-from-sales-nav-search ERROR:", error);
       }
