@@ -102,7 +102,7 @@ async function scheduleJob(functionName, params) {
           resolve(result);
         })
         .catch((error) => {
-          console.error(`Job failed`, error);
+          console.error(`Job failed:`, error);
           reject(error);
         });
       return;
