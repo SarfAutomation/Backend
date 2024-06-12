@@ -40,14 +40,14 @@ async def comment_on_post(params, proxy=None, headless=True):
         selector = 'button[aria-label="React Like"]'
         await page.wait_for_selector(selector)
         await page.click(selector)
-        await page.wait_for_timeout(random.randint(1000, 3000))
+        await page.wait_for_timeout(random.randint(1000, 10000))
         selector = ".ql-editor"
         await page.wait_for_selector(selector)
         await page.fill(selector, comment)
-        await page.wait_for_timeout(random.randint(1000, 3000))
+        await page.wait_for_timeout(random.randint(1000, 10000))
         selector = ".comments-comment-box__submit-button.artdeco-button--primary"
         await page.click(".comments-comment-box__submit-button.artdeco-button--primary")
-        await page.wait_for_timeout(random.randint(1000, 3000))
+        await page.wait_for_timeout(random.randint(1000, 10000))
         await browser.close()
 
 

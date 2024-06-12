@@ -1,4 +1,4 @@
-#from web_agent import WebAgent
+# from web_agent import WebAgent
 from playwright.async_api import async_playwright
 from utils.page import get_secure_page
 from dotenv import load_dotenv
@@ -7,11 +7,13 @@ from urllib.parse import quote
 
 load_dotenv()
 
+
 async def get_sales_nav_url(params, proxy=None, headless=True):
     async with async_playwright() as p:
         try:
             linkedin_url = params["linkedin_url"]
             key = params["key"]
+            list = params["list"]
         except:
             raise Exception("Missing params")
 
@@ -22,7 +24,7 @@ async def get_sales_nav_url(params, proxy=None, headless=True):
         browser = await p.chromium.launch(args=args, headless=headless)
 
         user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"
-        
+
         context, page = await get_secure_page(browser, user_agent, proxy)
 
         li_at = {
@@ -32,7 +34,7 @@ async def get_sales_nav_url(params, proxy=None, headless=True):
             "path": "/",
             "secure": True,
         }
-        #agent = WebAgent(page)
+        # agent = WebAgent(page)
         await context.add_cookies([li_at])
         await page.goto(linkedin_url)
         await page.wait_for_selector(
@@ -59,7 +61,7 @@ async def get_sales_nav_url(params, proxy=None, headless=True):
             )
             name = await name_element.text_content()
             name = name.strip()
-            await page.wait_for_timeout(random.randint(1000, 3000))
+            await page.wait_for_timeout(random.randint(1000, 10000))
             profile_link_selector = 'a.inverse-link-on-a-light-background-without-visited-and-hover:has-text("View profile")'
             dropdown_hidden = True
             tries = 0
@@ -78,26 +80,20 @@ async def get_sales_nav_url(params, proxy=None, headless=True):
                 await browser.close()
                 return {"name": "", "url": ""}
             await page.click(profile_link_selector)
-        await page.wait_for_timeout(random.randint(1000, 3000))
-        button_selector = 'button[aria-label="Add note"]'
-        await page.wait_for_selector(button_selector)
-        await page.click(button_selector)
-        await page.wait_for_timeout(random.randint(1000, 3000))
-        try:
-            note_selector = (
-                ".sharing-entity-notes-vertical-list-widget-card .p2.break-words"
-            )
-            await page.wait_for_selector(note_selector, timeout=5000)
-            contains_new_connection = await page.evaluate(
-                """() => {
-                const elements = document.querySelectorAll('.sharing-entity-notes-vertical-list-widget-card .p2.break-words');
-                return Array.from(elements).some(el => el.textContent.includes("New Connection"));
-            }"""
-            )
-            if contains_new_connection:
-                await browser.close()
-                return {"name": name, "url": page.url}
-        except:
-            pass
+        await page.wait_for_timeout(random.randint(1000, 10000))
+        if list:
+            try:
+                selector = 'li[data-x--lead-lists--custom-list-item]'
+                elements = await page.query_selector_all(selector)
+                for element in elements:
+                    text_content = await element.text_content()
+                    if list in text_content:
+                        await browser.close()
+                        return {"name": name, "url": page.url}
+            except:
+                pass
         await browser.close()
         return {"name": "", "url": ""}
+
+
+

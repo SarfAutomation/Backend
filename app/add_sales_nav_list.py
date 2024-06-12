@@ -6,6 +6,7 @@ import random
 
 load_dotenv()
 
+
 def extract_user_id_from_linkedin_url(url):
     parts = url.rstrip("/").split("/")
     user_id = parts[-1]
@@ -39,18 +40,18 @@ async def add_sales_nav_list(params, proxy=None, headless=True):
             "path": "/",
             "secure": True,
         }
-        
+
         await context.add_cookies([li_at])
         await page.goto(
             profile_link,
             wait_until="domcontentloaded",
         )
-        await page.wait_for_timeout(random.randint(1000, 3000))
+        await page.wait_for_timeout(random.randint(1000, 10000))
         await page.click('button[aria-label*="Save to list"]')
-        await page.wait_for_timeout(random.randint(1000, 3000))
+        await page.wait_for_timeout(random.randint(1000, 10000))
         await page.wait_for_selector(f"text={list}", state="visible")
         await page.click(f"text={list}")
-        await page.wait_for_timeout(random.randint(1000, 3000))
+        await page.wait_for_timeout(random.randint(1000, 10000))
         await browser.close()
 
 

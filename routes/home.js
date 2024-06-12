@@ -11,6 +11,9 @@ dotenv.config();
 const router = express.Router();
 const openai = new OpenAI();
 
+const LUDI_KEY =
+  "AQEDAUcY98sDtbmOAAABj-HmvAAAAAGQBfNAAFYAdr7zDsd59vbrHUV2bV3lMzGRyvkcTbM_CIN4QcC5KCn-jn3EzY7avkPFJDbN2FvsPBrcoXWfle5exbZrORzw8gUYFdox8PFaniEQzlcId1q6_lvn";
+
 router.post("/check-IC-reply", async (req, res) => {
   try {
     const { profile, name } = req.body;
@@ -156,32 +159,37 @@ router.post("/send-IC-inmail", async (req, res) => {
 });
 
 router.post("/check-connection", async (req, res) => {
+  const { key, timeOffset } = req.body;
   try {
     const job = async () => {
       try {
-        const data = await scheduleJob("get_recent_connections", {
-          key: "AQEDAR5mR60C386-AAABjs-h9BAAAAGO8654EFYAnlJkWITqvqUD3WfQNNBMZRzOQLGwMBt7s6N5va13mQ71C2WEWkghD2IdYSy1WHG3OOkC5SIPscZcn9icKjGHyT0uPw-twG031xOKucazzmOpce6G",
-        });
-        console.log(data);
+        // const data = await scheduleJob("get_recent_connections", {
+        //   key: key,
+        //   time_offset: parseInt(timeOffset),
+        // });
+        const data = ["https://www.linkedin.com/in/kwa415/"];
         await Promise.all(
           data.map(async (linkedinUrl) => {
             let salesNavUrl;
             try {
               salesNavUrl = await scheduleJob("get_sales_nav_url", {
                 linkedin_url: linkedinUrl,
-                key: "AQEDAR5mR60C386-AAABjs-h9BAAAAGO8654EFYAnlJkWITqvqUD3WfQNNBMZRzOQLGwMBt7s6N5va13mQ71C2WEWkghD2IdYSy1WHG3OOkC5SIPscZcn9icKjGHyT0uPw-twG031xOKucazzmOpce6G",
+                list: key.slice(0, 75),
+                key: LUDI_KEY,
               });
             } catch (error) {
               return;
             }
-            // if (salesNavUrl.name && salesNavUrl.url) {
-            //   await axios.post(
-            //     "https://hooks.zapier.com/hooks/catch/18369368/3nvym70/",
-            //     {
-            //       salesNavUrl,
-            //     }
-            //   );
-            // }
+            console.log(salesNavUrl);
+            if (salesNavUrl.name && salesNavUrl.url) {
+              await axios.post(
+                "https://hooks.zapier.com/hooks/catch/18369368/2ois7ax/",
+                {
+                  salesNavUrl,
+                  key,
+                }
+              );
+            }
           })
         );
       } catch (error) {
@@ -267,7 +275,9 @@ router.post("/generate-comment", async (req, res) => {
           (post) =>
             parsedCommentedPosts.findIndex(
               (commentedPost) => commentedPost == post.url
-            ) < 0 && post.type.includes("posted")
+            ) < 0 &&
+            post.type.includes("posted") &&
+            !post.type.includes("reposted")
         );
         if (!posts.length) {
           return;
@@ -440,14 +450,12 @@ router.post("/send-cr-message", async (req, res) => {
 
 router.post("/add-from-sales-nav-search", async (req, res) => {
   const { searchUrl, key, amount } = req.body;
-  const ludiKey =
-    "AQEDAUcY98sDtbmOAAABj-HmvAAAAAGQBfNAAFYAdr7zDsd59vbrHUV2bV3lMzGRyvkcTbM_CIN4QcC5KCn-jn3EzY7avkPFJDbN2FvsPBrcoXWfle5exbZrORzw8gUYFdox8PFaniEQzlcId1q6_lvn";
   try {
     const job = async () => {
       try {
         const profiles = await scheduleJob("search_sales_nav", {
           search_url: searchUrl,
-          key: ludiKey,
+          key: LUDI_KEY,
           amount: amount,
         });
         for (const profile of profiles) {
@@ -455,7 +463,7 @@ router.post("/add-from-sales-nav-search", async (req, res) => {
             const { name, url } = profile;
             const linkedin = await scheduleJob("get_linkedin_url", {
               sales_nav_url: url,
-              key: ludiKey,
+              key: LUDI_KEY,
             });
             await axios.post(
               "https://hooks.zapier.com/hooks/catch/18369368/2oyv0vs/",
@@ -468,7 +476,7 @@ router.post("/add-from-sales-nav-search", async (req, res) => {
             await scheduleJob("add_sales_nav_list", {
               profile_link: url,
               list: key.slice(0, 75),
-              key: ludiKey,
+              key: LUDI_KEY,
             });
           } catch (error) {
             console.log(error);
@@ -476,6 +484,42 @@ router.post("/add-from-sales-nav-search", async (req, res) => {
         }
       } catch (error) {
         console.log("add-from-sales-nav-search ERROR:", error);
+      }
+    };
+    job();
+    return res.status(200).send("Started");
+  } catch (error) {
+    console.log(error);
+    return res.status(400).send("Something went wrong");
+  }
+});
+
+router.post("/get-notifications", async (req, res) => {
+  const { key, timeOffset } = req.body;
+  try {
+    const job = async () => {
+      try {
+        const notifications = await scheduleJob("get_notifications", {
+          key: key,
+          time_offset: parseInt(timeOffset),
+        });
+        const names = new Set();
+        const uniqueNameNotification = notifications.filter((notification) => {
+          if (!names.has(notification.name)) {
+            names.add(notification.name);
+            return true;
+          }
+          return false;
+        });
+        await axios.post(
+          "https://hooks.zapier.com/hooks/catch/18369368/2o9ullr/",
+          {
+            notifications: uniqueNameNotification,
+            key: key,
+          }
+        );
+      } catch (error) {
+        console.log("get-notifications ERROR:", error);
       }
     };
     job();

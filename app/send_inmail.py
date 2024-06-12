@@ -48,7 +48,7 @@ async def send_inmail(params, proxy=None, headless=True):
             profile_link,
             wait_until="domcontentloaded",
         )
-        await page.wait_for_timeout(random.randint(1000, 3000))
+        await page.wait_for_timeout(random.randint(1000, 10000))
         selector = 'span[data-anonymize="person-name"]'
         await page.wait_for_selector(selector)
         name_element = await page.query_selector(selector)
@@ -61,20 +61,20 @@ async def send_inmail(params, proxy=None, headless=True):
         message_selector = "textarea.compose-form__message-field"
         try:
             await page.type(subject_selector, subject, timeout=5000)
-            await page.wait_for_timeout(random.randint(1000, 3000))
+            await page.wait_for_timeout(random.randint(1000, 10000))
         except:
             pass
         await page.type(message_selector, message)
-        await page.wait_for_timeout(random.randint(1000, 3000))
+        await page.wait_for_timeout(random.randint(1000, 10000))
         send_button_selector = 'button:has-text("Send")'
         await page.wait_for_selector(send_button_selector, state="attached")
-        await page.wait_for_timeout(random.randint(1000, 3000))
+        await page.wait_for_timeout(random.randint(1000, 10000))
         button_enabled = await page.is_enabled(send_button_selector)
         # if button_enabled:
         #     await page.click(send_button_selector)
         # else:
         #     raise Exception("Failed to click send button")
-        await page.wait_for_timeout(random.randint(1000, 3000))
+        await page.wait_for_timeout(random.randint(1000, 10000))
         await page.wait_for_timeout(10000)
         selector = f'button:has(span:has-text("Close conversation with {name}"))'
         await page.click(selector)

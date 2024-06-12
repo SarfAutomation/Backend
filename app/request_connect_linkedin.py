@@ -34,7 +34,7 @@ async def request_connect_linkedin(params, proxy=None, headless=True):
         # agent = WebAgent(page)
         await context.add_cookies([li_at])
         await page.goto(linkedin_url)
-        await page.wait_for_timeout(random.randint(1000, 3000))
+        await page.wait_for_timeout(random.randint(1000, 10000))
         await page.wait_for_selector(
             "h1.text-heading-xlarge.inline.t-24.v-align-middle.break-words",
         )
@@ -53,7 +53,7 @@ async def request_connect_linkedin(params, proxy=None, headless=True):
             f'[aria-label="Invite {html.escape(name)} to connect"]'
         )
         connect_button_clicked = False
-        await page.wait_for_timeout(random.randint(1000, 3000))
+        await page.wait_for_timeout(random.randint(1000, 10000))
         for connect_button in connect_buttons:
             try:
                 await connect_button.click(timeout=5000)
@@ -61,15 +61,15 @@ async def request_connect_linkedin(params, proxy=None, headless=True):
             except Exception as e:
                 print(e)
         if connect_button_clicked:
-            await page.wait_for_timeout(random.randint(1000, 3000))
+            await page.wait_for_timeout(random.randint(1000, 10000))
             await page.wait_for_selector('[aria-label="Add a note"]')
             await page.click('[aria-label="Add a note"]')
-            await page.wait_for_timeout(random.randint(1000, 3000))
+            await page.wait_for_timeout(random.randint(1000, 10000))
             await page.type(
                 'textarea[name="message"]',
                 content,
             )
-            await page.wait_for_timeout(random.randint(1000, 3000))
+            await page.wait_for_timeout(random.randint(1000, 10000))
             await page.click(
                 ".artdeco-button.artdeco-button--2.artdeco-button--primary.ember-view.ml1"
             )

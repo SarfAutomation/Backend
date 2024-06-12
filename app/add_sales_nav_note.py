@@ -50,18 +50,18 @@ async def add_sales_nav_note(params, proxy=None, headless=True):
         name_element = await page.query_selector(selector)
         name = await name_element.text_content()
         name = name.strip()
-        await page.wait_for_timeout(random.randint(1000, 3000))
+        await page.wait_for_timeout(random.randint(1000, 10000))
         button_selector = 'button[aria-label="Add note"]'
         await page.click(button_selector)
-        await page.wait_for_timeout(random.randint(1000, 3000))
+        await page.wait_for_timeout(random.randint(1000, 10000))
         button_selector = 'text="Add note"'
         button = await page.query_selector(button_selector)
         if button:
             await button.click()
-            await page.wait_for_timeout(random.randint(1000, 3000))
+            await page.wait_for_timeout(random.randint(1000, 10000))
         textarea_selector = 'textarea[name="sharing-entity-notes-vertical-list-widget-card__textarea-name"]'
         await page.type(textarea_selector, note)
-        await page.wait_for_timeout(random.randint(1000, 3000))
+        await page.wait_for_timeout(random.randint(1000, 10000))
         button_selector = (
             'button[aria-label="Done making changes to note, save these edits"]'
         )

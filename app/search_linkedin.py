@@ -46,11 +46,11 @@ async def search_linkedin(params, proxy=None, headless=True):
                 wait_until="domcontentloaded",
             )
             for i in range(10):
-                await page.wait_for_timeout(random.randint(1000, 3000))
+                await page.wait_for_timeout(random.randint(1000, 10000))
                 person_selector = f"//li[contains(@class, 'reusable-search__result-container')][{i+1}]"
                 await page.wait_for_selector(person_selector, timeout=5000)
                 await page.click(person_selector, force=True, timeout=5000)
-                await page.wait_for_timeout(random.randint(1000, 3000))
+                await page.wait_for_timeout(random.randint(1000, 10000))
                 # result.append(extract_user_id_from_linkedin_url(page.url))
                 result.append(page.url)
                 await page.go_back()

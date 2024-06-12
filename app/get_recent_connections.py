@@ -10,6 +10,7 @@ async def get_recent_connections(params, proxy=None, headless=True):
     async with async_playwright() as p:
         try:
             key = params["key"]
+            time_offset = params["time_offset"]
         except:
             raise Exception("Missing params")
 
@@ -47,8 +48,6 @@ async def get_recent_connections(params, proxy=None, headless=True):
             "month": 60 * 60 * 24 * 30,
             "year": 60 * 60 * 24 * 365,
         }
-
-        time_offset = time_to_value["day"]
 
         result = []
 

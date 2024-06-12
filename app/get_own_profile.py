@@ -33,14 +33,14 @@ async def get_own_profile(params, proxy=None, headless=True):
         # #agent = WebAgent(page)
         await context.add_cookies([li_at])
         await page.goto("https://www.linkedin.com")
-        await page.wait_for_timeout(random.randint(1000, 3000))
+        await page.wait_for_timeout(random.randint(1000, 10000))
         await page.wait_for_selector(".global-nav__primary-link-me-menu-trigger")
         await page.click(".global-nav__primary-link-me-menu-trigger")
-        await page.wait_for_timeout(random.randint(1000, 3000))
+        await page.wait_for_timeout(random.randint(1000, 10000))
         await page.wait_for_selector('text="View Profile"')
         await page.click('text="View Profile"')
 
-        await page.wait_for_timeout(random.randint(1000, 3000))
+        await page.wait_for_timeout(random.randint(1000, 10000))
         url = page.url
 
         # name

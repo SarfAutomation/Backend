@@ -2,6 +2,7 @@
 from playwright.async_api import async_playwright
 from utils.page import get_secure_page
 from dotenv import load_dotenv
+import random
 
 load_dotenv()
 
@@ -31,13 +32,12 @@ async def get_linkedin_url(params, proxy=None, headless=True):
         # agent = WebAgent(page)
         await context.add_cookies([li_at])
         await page.goto(sales_nav_url)
-
-        # Click the button with the specified aria-label
+        await page.wait_for_timeout(random.randint(1000, 10000))
         await page.click('button[aria-label="Open actions overflow menu"]')
         linkedin_profile_href = await page.get_attribute(
             'a._item_1xnv7i[href*="linkedin.com/in"]', "href"
         )
-        await page.wait_for_timeout(10000)
+        await page.wait_for_timeout(random.randint(1000, 10000))
         await browser.close()
         return {"url": linkedin_profile_href}
 

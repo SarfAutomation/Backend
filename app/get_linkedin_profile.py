@@ -33,18 +33,19 @@ async def get_linkedin_profile(params, proxy=None, headless=True):
         # #agent = WebAgent(page)
         await context.add_cookies([li_at])
         await page.goto(linkedin_url)
-        await page.wait_for_timeout(random.randint(1000, 3000))
+        await page.wait_for_timeout(random.randint(1000, 10000))
 
         # name
         selector = "h1.text-heading-xlarge.inline.t-24.v-align-middle.break-words"
         await page.wait_for_selector(selector)
         name = await page.inner_text(selector)
-        await page.wait_for_timeout(random.randint(1000, 3000))
+        await page.wait_for_timeout(random.randint(1000, 10000))
 
         try:
+            await page.click('button:has-text("Posts")', timeout=5000)
+            await page.wait_for_timeout(random.randint(1000, 10000))
             # Select the main container elements by their class
             container_elements = await page.query_selector_all('.profile-creator-shared-feed-update__mini-update.display-flex.flex-column')
-
             recent_posts = []
             for container in container_elements:
                 # Within each container, find all anchor tags and extract their href attributes
@@ -151,3 +152,14 @@ async def get_linkedin_profile(params, proxy=None, headless=True):
             "about": about,
             "experiences": all_experiences[:3],
         }
+
+# import asyncio
+# print(asyncio.run(
+#     get_linkedin_profile(
+#         {
+#             "linkedin_url": "https://www.linkedin.com/in/jasonciment/",
+#             "key": "AQEDAR5mR60C386-AAABjs-h9BAAAAGO8654EFYAnlJkWITqvqUD3WfQNNBMZRzOQLGwMBt7s6N5va13mQ71C2WEWkghD2IdYSy1WHG3OOkC5SIPscZcn9icKjGHyT0uPw-twG031xOKucazzmOpce6G",
+#         },
+#         headless=False,
+#     )
+# ))

@@ -38,7 +38,7 @@ async def get_inmail(params, proxy=None, headless=True):
 
         await page.fill(input_selector, name)
         await page.keyboard.press("Enter")
-        await page.wait_for_timeout(random.randint(1000, 3000))
+        await page.wait_for_timeout(random.randint(1000, 10000))
         link_selector = (
             "li[data-x-conversation-list-item] a.conversation-list-item__link"
         )

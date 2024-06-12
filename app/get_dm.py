@@ -41,7 +41,7 @@ async def get_dm(params, proxy=None, headless=True):
         await page.wait_for_selector(input_selector, state="visible")
         await page.type(input_selector, name)
         await page.keyboard.press("Enter")
-        await page.wait_for_timeout(random.randint(1000, 3000))
+        await page.wait_for_timeout(random.randint(1000, 10000))
         selector = "a.msg-conversation-listitem__link.msg-conversations-container__convo-item-link.pl3"
         try:
             await page.wait_for_selector(
@@ -54,7 +54,7 @@ async def get_dm(params, proxy=None, headless=True):
         elements = await page.query_selector_all(selector)
         if elements:
             await elements[0].click()
-        await page.wait_for_timeout(random.randint(1000, 3000))
+        await page.wait_for_timeout(random.randint(1000, 10000))
         message_items = await page.query_selector_all(".msg-s-message-list__event")
 
         result = []

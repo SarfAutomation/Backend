@@ -42,9 +42,9 @@ async def security_code(params, proxy=None, headless=True):
             # clear db of the saved browser stuff
             raise Exception("Browser session expired")
         await page.fill("input#input__email_verification_pin", code)
-        await page.wait_for_timeout(random.randint(1000, 3000))
+        await page.wait_for_timeout(random.randint(1000, 10000))
         await page.click("button#email-pin-submit-button")
-        await page.wait_for_timeout(random.randint(1000, 3000))
+        await page.wait_for_timeout(random.randint(1000, 10000))
         cookies = await context.cookies()
         li_at = ""
         for cookie in cookies:

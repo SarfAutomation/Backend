@@ -97,7 +97,7 @@ async def search_sales_nav(params, proxy=None, headless=True):
                 )
                 name = await name_element.text_content()
                 name = name.strip()
-                await page.wait_for_timeout(random.randint(1000, 3000))
+                await page.wait_for_timeout(random.randint(1000, 10000))
                 profile_link_selector = 'a.inverse-link-on-a-light-background-without-visited-and-hover:has-text("View profile")'
                 dropdown_hidden = True
                 tries = 0

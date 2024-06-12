@@ -22,9 +22,6 @@ const setup = async () => {
       jobQueues[proxy.key] = jobQueue;
       await jobQueue.empty();
       jobQueue.process(processJob);
-      jobQueue.on("active", (job) => {
-        console.log(`Job ${job.id} started`);
-      });
     })
   );
 };
