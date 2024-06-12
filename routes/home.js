@@ -163,11 +163,10 @@ router.post("/check-connection", async (req, res) => {
   try {
     const job = async () => {
       try {
-        // const data = await scheduleJob("get_recent_connections", {
-        //   key: key,
-        //   time_offset: parseInt(timeOffset),
-        // });
-        const data = ["https://www.linkedin.com/in/kwa415/"];
+        const data = await scheduleJob("get_recent_connections", {
+          key: key,
+          time_offset: parseInt(timeOffset),
+        });
         await Promise.all(
           data.map(async (linkedinUrl) => {
             let salesNavUrl;
