@@ -41,13 +41,18 @@ async def comment_on_post(params, proxy=None, headless=True):
         await page.wait_for_selector(selector)
         await page.click(selector)
         await page.wait_for_timeout(random.randint(1000, 10000))
-        selector = ".ql-editor"
-        await page.wait_for_selector(selector)
-        await page.fill(selector, comment)
-        await page.wait_for_timeout(random.randint(1000, 10000))
-        selector = ".comments-comment-box__submit-button.artdeco-button--primary"
-        await page.click(".comments-comment-box__submit-button.artdeco-button--primary")
-        await page.wait_for_timeout(random.randint(1000, 10000))
+        try:
+            selector = ".ql-editor"
+            await page.wait_for_selector(selector)
+            await page.fill(selector, comment)
+            await page.wait_for_timeout(random.randint(1000, 10000))
+            selector = ".comments-comment-box__submit-button.artdeco-button--primary"
+            await page.click(
+                ".comments-comment-box__submit-button.artdeco-button--primary"
+            )
+            await page.wait_for_timeout(random.randint(1000, 10000))
+        except:
+            pass
         await browser.close()
 
 

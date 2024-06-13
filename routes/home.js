@@ -424,7 +424,7 @@ router.post("/send-cr-message", async (req, res) => {
       try {
         await scheduleJob("request_connect_linkedin", {
           linkedin_url: linkedinUrl,
-          content: message,
+          content: message ? message : "[empty message]",
           key: key,
         });
         await axios.post(

@@ -61,14 +61,15 @@ async def request_connect_linkedin(params, proxy=None, headless=True):
             except Exception as e:
                 print(e)
         if connect_button_clicked:
-            await page.wait_for_timeout(random.randint(1000, 10000))
-            await page.wait_for_selector('[aria-label="Add a note"]')
-            await page.click('[aria-label="Add a note"]')
-            await page.wait_for_timeout(random.randint(1000, 10000))
-            await page.type(
-                'textarea[name="message"]',
-                content,
-            )
+            if content != "[empty message]":
+                await page.wait_for_timeout(random.randint(1000, 10000))
+                await page.wait_for_selector('[aria-label="Add a note"]')
+                await page.click('[aria-label="Add a note"]')
+                await page.wait_for_timeout(random.randint(1000, 10000))
+                await page.type(
+                    'textarea[name="message"]',
+                    content,
+                )
             await page.wait_for_timeout(random.randint(1000, 10000))
             await page.click(
                 ".artdeco-button.artdeco-button--2.artdeco-button--primary.ember-view.ml1"
