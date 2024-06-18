@@ -14,8 +14,10 @@ async def test_ip(headless=True):
         browser = await p.chromium.launch(args=args, headless=headless)
 
         server = "http://brd.superproxy.io:22225"
-        username = "brd-customer-hl_1752fa58-zone-la-ip-46.232.208.187"
+        username = "brd-customer-hl_1752fa58-zone-la-ip-91.92.216.78"
         password = "w89q7vd4m95u"
+
+        key = "AQEDAQH9rzUFSmdHAAABkCdqW84AAAGQS3bfzk0AayKUHXTMpBe8mQasWOhyKcyJkptW6eF1f0JIkCVhap8Nht9VLXme3Y1VwwpgoC5BVwSGwP2aqg9BdKlf4PAtTaO7uumiBCM1wUWSEm5TYS5tTG_3"
 
         proxy = {
             "server": server,
@@ -24,30 +26,35 @@ async def test_ip(headless=True):
         }
         context = await browser.new_context(
             proxy=proxy,
-            # geolocation={"latitude": 34.0522, "longitude": -118.2437},
-            # permissions=["geolocation"],
             ignore_https_errors=True,
         )
+        li_at = {
+            "name": "li_at",
+            "value": key,
+            "domain": ".www.linkedin.com",
+            "path": "/",
+            "secure": True,
+        }
+        await context.add_cookies([li_at])
 
         page = await context.new_page()
 
-        # agent = WebAgent(page)
-
         await page.goto("http://lumtest.com/myip.json")
-        return await page.text_content("body")
-        
+        await page.wait_for_timeout(2000)
+
+        await page.goto(
+            f"https://www.linkedin.com",
+            wait_until="domcontentloaded",
+        )
+        await page.wait_for_timeout(50000000)
+        await browser.close()
 
 
 import asyncio
 
 
 async def main():
-    result_dict = defaultdict(int)
-    for i in range(1000):
-        result = json.loads(await test_ip())
-        print(i, result["ip"])
-        result_dict[result["ip"]] += 1
-
+    return await test_ip(headless=False)
 
 
 print(asyncio.run(main()))
