@@ -88,7 +88,6 @@ const processJob = async (job) => {
 async function scheduleJob(functionName, params) {
   return new Promise((resolve, reject) => {
     let jobQueue = jobQueues[params["key"]];
-    console.log(jobQueue)
     if (!jobQueue) {
       processJob({
         data: {

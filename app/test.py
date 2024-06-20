@@ -1,8 +1,5 @@
-# from web_agent import WebAgent
 from playwright.async_api import async_playwright
 from dotenv import load_dotenv
-import json
-from collections import defaultdict
 
 load_dotenv()
 

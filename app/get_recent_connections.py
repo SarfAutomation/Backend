@@ -55,7 +55,22 @@ async def get_recent_connections(params, proxy=None, headless=True):
 
         while has_more_content:
             await page.mouse.wheel(0, 100000)
-            await page.wait_for_timeout(random.randint(1000, 10000))
+            await page.wait_for_timeout(random.randint(1000, 5000))
+            show_more_button = await page.query_selector(
+                "button.artdeco-button--muted.artdeco-button--1.artdeco-button--full.artdeco-button--secondary.scaffold-finite-scroll__load-button"
+            )
+            if show_more_button:
+                button_text = await show_more_button.query_selector(
+                    "span.artdeco-button__text"
+                )
+                if button_text:
+                    text_content = await button_text.text_content()
+                    if "Show more results" in text_content:
+                        try:
+                            await show_more_button.click()
+                        except:
+                            pass
+            await page.wait_for_timeout(random.randint(1000, 5000))
             # Check if the scroll position has changed
             current_height = await page.evaluate("document.body.scrollHeight")
             if current_height == previous_height:
@@ -68,60 +83,48 @@ async def get_recent_connections(params, proxy=None, headless=True):
             if last_connection_card:
                 time_element = await last_connection_card.query_selector("time")
                 time_text = await time_element.text_content() if time_element else ""
-                matches = re.search(r"(\d+)\s*(y|m|w|h|d|m)?", time_text)
-                if matches:
-                    number = int(matches.group(1))
-                    unit = matches.group(2)
-                    if unit == "y":
-                        time_in_days = number * 365
-                    elif unit == "m":
-                        time_in_days = number * 30
-                    elif unit == "w":
-                        time_in_days = number * 7
-                    elif unit == "d":
-                        time_in_days = number
-                    else:
-                        time_in_days = (
-                            number / 24 if unit == "h" else number / 1440
-                        )  # hours to days or minutes to days
-
-                    if time_in_days > time_offset:
-                        has_more_content = False
-
-            selector = ".mn-connection-card__details"
-            await page.wait_for_selector(selector)
-            connection_cards = await page.query_selector_all(selector)
-
-            result = []
-
-            for card in connection_cards:
-                time_element = await card.query_selector("time")
-                time_text = await time_element.text_content() if time_element else ""
-
                 matches = re.search(
                     r"(\d+)\s*(year|month|week|hour|day|minute)s? ago", time_text
                 )
                 if matches:
                     number = int(matches.group(1))
                     unit = matches.group(2)
+                    if time_to_value[unit] * number > time_offset:
+                        has_more_content = False
 
-                    if time_to_value[unit] * number < time_offset:
-                        link_element = await card.query_selector(
-                            "a.mn-connection-card__link"
-                        )
-                        href = (
-                            await link_element.get_attribute("href")
-                            if link_element
-                            else None
-                        )
-                        if href:
-                            result.append("https://www.linkedin.com" + href)
-                    else:
-                        break
+        selector = ".mn-connection-card__details"
+        await page.wait_for_selector(selector)
+        connection_cards = await page.query_selector_all(selector)
 
-            await page.wait_for_timeout(1500)
-            await browser.close()
-            return result
+        result = []
+
+        for card in connection_cards:
+            time_element = await card.query_selector("time")
+            time_text = await time_element.text_content() if time_element else ""
+
+            matches = re.search(
+                r"(\d+)\s*(year|month|week|hour|day|minute)s? ago", time_text
+            )
+            if matches:
+                number = int(matches.group(1))
+                unit = matches.group(2)
+                if time_to_value[unit] * number <= time_offset:
+                    link_element = await card.query_selector(
+                        "a.mn-connection-card__link"
+                    )
+                    href = (
+                        await link_element.get_attribute("href")
+                        if link_element
+                        else None
+                    )
+                    if href:
+                        result.append("https://www.linkedin.com" + href)
+                else:
+                    break
+
+        await page.wait_for_timeout(1500)
+        await browser.close()
+        return result
 
 
 # import asyncio

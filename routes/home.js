@@ -373,27 +373,28 @@ router.post("/generate-cr-message", async (req, res) => {
           linkedin_url: linkedinUrl,
           key: key,
         });
-        console.log(linkedinProfile);
-        const response = await openai.chat.completions.create({
-          messages: [
-            {
-              role: "system",
-              content:
-                "You are a connection request message writer, you will receive a JSON containing information about a linkedin profile and generate a very short human like message to connect with profile.",
-            },
-            {
-              role: "user",
-              content: `Here is the linkedin profile JSON: ${JSON.stringify(
-                linkedinProfile
-              )}, and here is what the user has commented on this person's post before ${comments}. return the message in the following JSON format: {"message": "Your connection request message here"}`,
-            },
-          ],
-          model: "gpt-4o",
-        });
-        const completion = extractJSONFromString(
-          response.choices[0].message.content
-        );
-        const message = completion.message;
+        // console.log(linkedinProfile);
+        // const response = await openai.chat.completions.create({
+        //   messages: [
+        //     {
+        //       role: "system",
+        //       content:
+        //         "You are a connection request message writer, you will receive a JSON containing information about a linkedin profile and generate a very short human like message to connect with profile.",
+        //     },
+        //     {
+        //       role: "user",
+        //       content: `Here is the linkedin profile JSON: ${JSON.stringify(
+        //         linkedinProfile
+        //       )}, and here is what the user has commented on this person's post before ${comments}. return the message in the following JSON format: {"message": "Your connection request message here"}`,
+        //     },
+        //   ],
+        //   model: "gpt-4o",
+        // });
+        // const completion = extractJSONFromString(
+        //   response.choices[0].message.content
+        // );
+        // const message = completion.message;
+        const message = "";
         await axios.post(
           "https://hooks.zapier.com/hooks/catch/18369368/2ylmgl2/",
           {
@@ -454,7 +455,7 @@ router.post("/add-from-sales-nav-search", async (req, res) => {
       try {
         const profiles = await scheduleJob("search_sales_nav", {
           search_url: searchUrl,
-          key: LUDI_KEY,
+          key: key,
           amount: amount,
         });
         for (const profile of profiles) {
@@ -462,7 +463,7 @@ router.post("/add-from-sales-nav-search", async (req, res) => {
             const { name, url } = profile;
             const linkedin = await scheduleJob("get_linkedin_url", {
               sales_nav_url: url,
-              key: LUDI_KEY,
+              key: key,
             });
             await axios.post(
               "https://hooks.zapier.com/hooks/catch/18369368/2oyv0vs/",
