@@ -15,7 +15,7 @@ async def get_notifications(params, proxy=None, headless=True):
             time_offset = params["time_offset"]
         except:
             raise Exception("Missing params")
-        
+
         args = ["--disable-gpu", "--single-process"] if headless else []
         browser = await p.chromium.launch(args=args, headless=headless)
 
@@ -57,13 +57,13 @@ async def get_notifications(params, proxy=None, headless=True):
                 has_more_content = False  # No more content to load
             else:
                 previous_height = current_height
-            last_notification = await page.query_selector('div[data-finite-scroll-hotkey-item]:last-of-type article.nt-card')
+            last_notification = await page.query_selector(
+                "div[data-finite-scroll-hotkey-item]:last-of-type article.nt-card"
+            )
             if last_notification:
-                time_ago = await last_notification.query_selector('p.nt-card__time-ago')
+                time_ago = await last_notification.query_selector("p.nt-card__time-ago")
                 time_ago_text = await time_ago.text_content()
-                matches = re.search(
-                r"(\d+)\s*(y|m|w|h|d|m)?", time_ago_text
-                )
+                matches = re.search(r"(\d+)\s*(y|m|w|h|d|m)?", time_ago_text)
                 if matches:
                     number = int(matches.group(1))
                     unit = matches.group(2)
@@ -76,38 +76,49 @@ async def get_notifications(params, proxy=None, headless=True):
         )
         results = []
         for notification in notifications:
-            # Extract data from each notification
-            headline = await notification.query_selector("a.nt-card__headline")
-            headline_text = await headline.text_content() if headline else "No headline"
+            try:
+                # Extract data from each notification
+                headline = await notification.query_selector("a.nt-card__headline")
+                headline_text = (
+                    await headline.text_content() if headline else "No headline"
+                )
 
-            # Extract the link from the 'a' tag
-            link_element = await last_notification.query_selector('a.nt-card__headline')
-            link = await link_element.get_attribute('href') if link_element else "No link"
+                # Extract the link from the 'a' tag
+                link_element = await last_notification.query_selector(
+                    "a.nt-card__headline"
+                )
+                link = (
+                    await link_element.get_attribute("href")
+                    if link_element
+                    else "No link"
+                )
 
-            time_ago = await notification.query_selector("p.nt-card__time-ago")
-            time_ago_text = (
-                await time_ago.text_content() if time_ago else "No time info"
-            )
+                time_ago = await notification.query_selector("p.nt-card__time-ago")
+                time_ago_text = (
+                    await time_ago.text_content() if time_ago else "No time info"
+                )
 
-            # Extract the name from the headline
-            strong_tag = await headline.query_selector('strong')
-            if strong_tag:
-                name = await strong_tag.text_content()
-            else:
-                name_span = await headline.query_selector('span')
-                if name_span:
-                    name = await name_span.inner_text()
+                # Extract the name from the headline
+                strong_tag = await headline.query_selector("strong")
+                if strong_tag:
+                    name = await strong_tag.text_content()
                 else:
-                    name = "No name"
+                    name_span = await headline.query_selector("span")
+                    if name_span:
+                        name = await name_span.inner_text()
+                    else:
+                        name = "No name"
 
-            results.append(
-                {
-                    "name": name,
-                    "headline": headline_text.strip(),
-                    "url": link,
-                    "time_ago": time_ago_text.strip(),
-                }
-            )
+                results.append(
+                    {
+                        "name": name,
+                        "headline": headline_text.strip(),
+                        "url": link,
+                        "time_ago": time_ago_text.strip(),
+                    }
+                )
+            except:
+                pass
         await browser.close()
         return results
 
@@ -118,8 +129,8 @@ async def get_notifications(params, proxy=None, headless=True):
 #     asyncio.run(
 #         get_notifications(
 #             {
-#                 "key": "AQEDAUcY98sDLr69AAABkA1loggAAAGQMXImCE0AW_qP6zUvtK1Jc0hQK3oIcIL4exWekbv1B4anqzMzkzAKwAm0pccaEqDvhSFah1gqDVYNwH4VzOo-iTSZyk9bBkcAnGkm4QrncsHPjMHqSET18bqB",
-#                 "time_offset": 60 * 60 * 3,
+#                 "key": "AQEDASgGia8FcXfnAAABj_S8d0QAAAGQGMj7RE0ArUfU0TtCUzwmt7KqbIQJmlqDP5ar31dSfD0cGPVlGAnHMpEPSWpKJTjZca3dnNaTpceYEQFt_6_gZ3RJLly7EZiJz0npu596ZDEwHJU25VsEC_ZU",
+#                 "time_offset": 60 * 60 * 24 * 7,
 #             },
 #             headless=False,
 #         )

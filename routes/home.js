@@ -173,8 +173,8 @@ router.post("/check-connection", async (req, res) => {
             try {
               salesNavUrl = await scheduleJob("get_sales_nav_url", {
                 linkedin_url: linkedinUrl,
-                list: key.slice(0, 75),
-                key: LUDI_KEY,
+                list: "dream100",
+                key: key,
               });
             } catch (error) {
               return;
@@ -455,7 +455,7 @@ router.post("/add-from-sales-nav-search", async (req, res) => {
       try {
         const profiles = await scheduleJob("search_sales_nav", {
           search_url: searchUrl,
-          key: key,
+          key: LUDI_KEY,
           amount: amount,
         });
         for (const profile of profiles) {
@@ -463,7 +463,7 @@ router.post("/add-from-sales-nav-search", async (req, res) => {
             const { name, url } = profile;
             const linkedin = await scheduleJob("get_linkedin_url", {
               sales_nav_url: url,
-              key: key,
+              key: LUDI_KEY,
             });
             await axios.post(
               "https://hooks.zapier.com/hooks/catch/18369368/2oyv0vs/",

@@ -41,10 +41,13 @@ async def comment_on_post(params, proxy=None, headless=True):
         await page.wait_for_selector(selector)
         await page.click(selector)
         await page.wait_for_timeout(random.randint(1000, 10000))
+        if comment == "[empty message]":
+            await browser.close()
+            return
         try:
             selector = ".ql-editor"
             await page.wait_for_selector(selector)
-            await page.fill(selector, comment)
+            await page.type(selector, comment)
             await page.wait_for_timeout(random.randint(1000, 10000))
             selector = ".comments-comment-box__submit-button.artdeco-button--primary"
             await page.click(
@@ -64,7 +67,7 @@ async def comment_on_post(params, proxy=None, headless=True):
 #     comment_on_post(
 #         {
 #             "post_url": "https://www.linkedin.com/posts/songanglu_big-news-brewit-yc-w23-now-supports-activity-7204157548009050113-Jhwd/?utm_source=share&utm_medium=member_desktop",
-#             "comment": "hi",
+#             "comment": "Great update, looking forward to trying this new feature!",
 #             "key": key,
 #         },
 #         headless=False,
