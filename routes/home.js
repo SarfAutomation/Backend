@@ -338,7 +338,7 @@ router.post("/send-comment", async (req, res) => {
       try {
         await scheduleJob("comment_on_post", {
           post_url: postUrl,
-          comment: comment,
+          content: comment ? comment : "[empty message]",
           key: key,
         });
         await axios.post(
