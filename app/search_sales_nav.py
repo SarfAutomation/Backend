@@ -73,6 +73,9 @@ async def search_sales_nav(params, proxy=None, headless=True):
         # open_count = 0
         # close_count = 0
         # while open_count < amount:
+        await page.goto("http://lumtest.com/myip.json")
+        await page.wait_for_timeout(2000)
+
         count = 0
         while count < amount:
             await page.goto(
