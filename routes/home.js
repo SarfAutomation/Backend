@@ -199,6 +199,7 @@ router.post("/check-connection", async (req, res) => {
               "https://hooks.zapier.com/hooks/catch/18369368/2ois7ax/",
               {
                 name: profile.name,
+                profile: linkedinUrl,
                 key,
               }
             );
