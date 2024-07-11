@@ -3,6 +3,7 @@ from playwright.async_api import async_playwright
 from utils.page import get_secure_page
 from dotenv import load_dotenv
 import random
+import html
 
 load_dotenv()
 
@@ -106,8 +107,9 @@ async def search_sales_nav(params, proxy=None, headless=True):
                 tries = 0
                 while dropdown_hidden and tries < 10:
                     try:
-                        selector = f'button[aria-label="See more actions for {name}"]'
-                        await page.wait_for_selector(selector)
+                        escaped_name = html.escape(name).replace("&#x27;", "&#39;")
+                        selector = f'button[aria-label="See more actions for {escaped_name}"]'
+                        await page.wait_for_selector(selector, timeout=1000)
                         button = await page.query_selector(selector)
                         await button.click(timeout=1000)
                         await page.wait_for_selector(

@@ -45,17 +45,17 @@ async def test_ip(username, password, key, headless=True):
 
 import asyncio
 
-# Tim
-print(
-    asyncio.run(
-        test_ip(
-            username="brd-customer-hl_1752fa58-zone-la-ip-91.92.216.78",
-            password="w89q7vd4m95u",
-            key="AQEDAQH9rzUFSmdHAAABkCdqW84AAAGQS3bfzk0AayKUHXTMpBe8mQasWOhyKcyJkptW6eF1f0JIkCVhap8Nht9VLXme3Y1VwwpgoC5BVwSGwP2aqg9BdKlf4PAtTaO7uumiBCM1wUWSEm5TYS5tTG_3",
-            headless=False,
-        )
-    )
-)
+# # Tim
+# print(
+#     asyncio.run(
+#         test_ip(
+#             username="brd-customer-hl_1752fa58-zone-la-ip-91.92.216.78",
+#             password="w89q7vd4m95u",
+#             key="AQEDAQH9rzUFSmdHAAABkCdqW84AAAGQS3bfzk0AayKUHXTMpBe8mQasWOhyKcyJkptW6eF1f0JIkCVhap8Nht9VLXme3Y1VwwpgoC5BVwSGwP2aqg9BdKlf4PAtTaO7uumiBCM1wUWSEm5TYS5tTG_3",
+#             headless=False,
+#         )
+#     )
+# )
 
 # # Emily
 # print(
@@ -80,3 +80,15 @@ print(
 #         )
 #     )
 # )
+
+# Karim
+print(
+    asyncio.run(
+        test_ip(
+            username="brd-customer-hl_1752fa58-zone-sf-ip-185.246.172.22",
+            password="r7sm0cf7eeqv",
+            key="AQEDASzak1oAoa41AAABkF_jjZ8AAAGQg_ARn00AF6vnc8pAZtx9epOT8XCxHnt9yKyBi05fVtVS2jMD5uYt6xGoytDNjzQvfyRTB863H27cCLEpiUcNXPxmZXdBmzsw56TNbLX_J5PxDIuB7mZSvvD8",
+            headless=False,
+        )
+    )
+)
