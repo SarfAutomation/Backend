@@ -12,7 +12,7 @@ const router = express.Router();
 const openai = new OpenAI();
 
 const LUDI_KEY =
-  "AQEDAUcY98sDtbmOAAABj-HmvAAAAAGQBfNAAFYAdr7zDsd59vbrHUV2bV3lMzGRyvkcTbM_CIN4QcC5KCn-jn3EzY7avkPFJDbN2FvsPBrcoXWfle5exbZrORzw8gUYFdox8PFaniEQzlcId1q6_lvn";
+  "AQEDAUcY98sE2bvuAAABkKQ4wzUAAAGQyEVHNVYAQpWvg8q8daxCTaGuM1TCjEKUDGVDzhRHFWHYS0gkSz-vugZApv3vOE8ga7svn4_eHr27uqpDOYxCZAoT3TjQ7A03XxpnlvyQIs2Lbd8bOqyXwG0y";
 
 router.post("/check-IC-reply", async (req, res) => {
   try {
