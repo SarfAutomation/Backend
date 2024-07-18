@@ -1,5 +1,5 @@
 asyncio
-playwright
+playwright==1.44
 openai
 requests
 aiofiles

@@ -99,7 +99,7 @@ print(
         test_ip(
             username="brd-customer-hl_1752fa58-zone-sf-ip-185.246.172.22",
             password="r7sm0cf7eeqv",
-            key="AQEDAQ3gNngADPtqAAABkKgDzb8AAAGQzBBRv04APD9uNvwpWsdIS68l28o-Gg54bD-3GI2YndxEiYjeu4qMoo9P-SOJclJMo6NOtkUCLEuGQTkJEt6PrDhOGlBfVRSqYiTF2ArdgHcvCgmcSmt8w0aE",
+            key="AQEDAQ3gNngAYzc8AAABkMbSlYsAAAGQ6t8Zi04ARJAcmEYcwTaxcnGcWAi6AhGUAVc-rGV3JO4Kv-ONMVq99iV3Qchct9Nw3y6SwYD2jEuZXBKswnlISpmWWAOV1edHpR1m8kQ7Fz1cnGk8uA4iqEXD",
             headless=False,
         )
     )

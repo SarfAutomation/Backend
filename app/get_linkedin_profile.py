@@ -6,6 +6,7 @@ import random
 
 load_dotenv()
 
+
 async def get_linkedin_profile(params, proxy=None, headless=True):
     async with async_playwright() as p:
         try:
@@ -45,13 +46,15 @@ async def get_linkedin_profile(params, proxy=None, headless=True):
             await page.click('button:has-text("Posts")', timeout=5000)
             await page.wait_for_timeout(random.randint(1000, 10000))
             # Select the main container elements by their class
-            container_elements = await page.query_selector_all('.profile-creator-shared-feed-update__mini-update.display-flex.flex-column')
+            container_elements = await page.query_selector_all(
+                ".profile-creator-shared-feed-update__mini-update.display-flex.flex-column"
+            )
             recent_posts = []
             for container in container_elements:
                 # Within each container, find all anchor tags and extract their href attributes
-                link_elements = await container.query_selector_all('a.app-aware-link')
+                link_elements = await container.query_selector_all("a.app-aware-link")
                 link = link_elements[0]
-                url = await link.get_attribute('href')
+                url = await link.get_attribute("href")
                 type = await link.get_attribute("aria-label")
                 if url:  # Ensure the link is not None or empty
                     recent_posts.append({"url": url, "type": type})
@@ -100,7 +103,9 @@ async def get_linkedin_profile(params, proxy=None, headless=True):
                 title_element = await container.query_selector(".t-bold")
                 title = await title_element.text_content() if title_element else "N/A"
 
-                employment_type_element = await container.query_selector(".t-14.t-normal")
+                employment_type_element = await container.query_selector(
+                    ".t-14.t-normal"
+                )
                 employment_type = (
                     await employment_type_element.text_content()
                     if employment_type_element
@@ -144,7 +149,7 @@ async def get_linkedin_profile(params, proxy=None, headless=True):
 
         await page.wait_for_timeout(5000)
         await browser.close()
-       
+
         return {
             "name": name,
             "recent_posts": recent_posts,
@@ -153,13 +158,22 @@ async def get_linkedin_profile(params, proxy=None, headless=True):
             "experiences": all_experiences[:3],
         }
 
+
 # import asyncio
-# print(asyncio.run(
-#     get_linkedin_profile(
-#         {
-#             "linkedin_url": "https://www.linkedin.com/in/jasonciment/",
-#             "key": "AQEDAR5mR60C386-AAABjs-h9BAAAAGO8654EFYAnlJkWITqvqUD3WfQNNBMZRzOQLGwMBt7s6N5va13mQ71C2WEWkghD2IdYSy1WHG3OOkC5SIPscZcn9icKjGHyT0uPw-twG031xOKucazzmOpce6G",
-#         },
-#         headless=False,
+
+# print(
+#     asyncio.run(
+#         get_linkedin_profile(
+#             {
+#                 "linkedin_url": "http://www.linkedin.com/in/donna-spafford-letier-85765a8",
+#                 "key": "AQEDAUcY98sE2bvuAAABkKQ4wzUAAAGQyEVHNVYAQpWvg8q8daxCTaGuM1TCjEKUDGVDzhRHFWHYS0gkSz-vugZApv3vOE8ga7svn4_eHr27uqpDOYxCZAoT3TjQ7A03XxpnlvyQIs2Lbd8bOqyXwG0y",
+#             },
+#             proxy={
+#                 "server": "http://brd.superproxy.io:22225",
+#                 "username": "brd-customer-hl_1752fa58-zone-sf-ip-185.246.172.22",
+#                 "password": "r7sm0cf7eeqv",
+#             },
+#             headless=False,
+#         )
 #     )
-# ))
+# )

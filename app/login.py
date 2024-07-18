@@ -156,7 +156,14 @@ async def login(params, proxy=None, headless=True):
 # print(
 #     asyncio.run(
 #         login(
-#             {"email": "zhanhugo0802@gmail.com", "password": "gogo2001"}, headless=False
+#             {
+#                 "email": "karim.saydashev@gmail.com",
+#                 "password": "Gnomio1!@12",
+#                 "proxyServer": "http://brd.superproxy.io:22225",
+#                 "proxyUsername": "brd-customer-hl_1752fa58-zone-sf-ip-185.246.172.22",
+#                 "proxyPassword": "r7sm0cf7eeqv",
+#             },
+#             headless=False,
 #         )
 #     )
 # )

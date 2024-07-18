@@ -49,27 +49,13 @@ async def comment_on_post(params, proxy=None, headless=True):
             await page.wait_for_selector(selector)
             await page.type(selector, comment)
             await page.wait_for_timeout(random.randint(1000, 10000))
-            selector = ".comments-comment-box__submit-button.artdeco-button--primary"
-            await page.click(
-                ".comments-comment-box__submit-button.artdeco-button--primary"
-            )
+            try:
+                await page.click(
+                    ".comments-comment-box__submit-button.artdeco-button--primary", timeout=5000
+                )
+            except:
+                await page.click('button.m2.artdeco-button.artdeco-button--1.artdeco-button--tertiary.ember-view')
             await page.wait_for_timeout(random.randint(1000, 10000))
         except:
             pass
         await browser.close()
-
-
-# import asyncio
-
-# key = "AQEDAUcY98sDtbmOAAABj-HmvAAAAAGQBfNAAFYAdr7zDsd59vbrHUV2bV3lMzGRyvkcTbM_CIN4QcC5KCn-jn3EzY7avkPFJDbN2FvsPBrcoXWfle5exbZrORzw8gUYFdox8PFaniEQzlcId1q6_lvn"
-
-# asyncio.run(
-#     comment_on_post(
-#         {
-#             "post_url": "https://www.linkedin.com/posts/songanglu_big-news-brewit-yc-w23-now-supports-activity-7204157548009050113-Jhwd/?utm_source=share&utm_medium=member_desktop",
-#             "comment": "Great update, looking forward to trying this new feature!",
-#             "key": key,
-#         },
-#         headless=False,
-#     )
-# )
